@@ -1,10 +1,28 @@
-#include "Ohmmeter.h"
-#include "Toolbox.h"
 #include <LiquidCrystal.h>
+#include <Servo.h>
+#include <Wire.h>
+#include <math.h>
+
+#include "Ohmmeter.h"
+#include "Nunchuk.h"
+#include "Coordinate_Calculator.h"
 
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-Toolbox toolbox(1);
 Ohmmeter ohmmeter(9800.0, A0);
+Coordinate_Calculator coordinate_Calculator(100.0, 150.0);
+
+int16_t nunchuk_X_Value = 0;
+int16_t nunchuk_Y_Value = 0;
+
+float x_Target;
+float y_Target;
+float z_Target;
+float module_Target;
+float argument_Target;
+
+Servo servo_Top;
+Servo servo_Mid;
+Servo servo_Bot;
 
 void setup() 
 {
@@ -24,17 +42,61 @@ void setup()
 
   lcd.begin(16, 2);
   Serial.begin(9600);
+
+  Wire.begin();
+  nunchuk_init();
+  servo_Top.attach(9);
+  servo_Mid.attach(10);
+  servo_Bot.attach(11);
 }
 
 void loop() 
 {
-  for(int power=0;power<=6;power++)
+  Calibrate_Servo();
+  while(true)
   {
-    for(int index=0;index<12;index++)
+    if (nunchuk_read())
     {
-      Serial.println( ohmmeter.E12[index] * toolbox.Power(10.0,power) );
+      if(nunchuk_accelY_raw()>600)
+      {
+        Calibrate_Servo();
+      }
+      else 
+      {
+        nunchuk_X_Value = Joystick_DeadZone( nunchuk_joystickX() );
+        nunchuk_Y_Value = Joystick_DeadZone( nunchuk_joystickY() );
+    
+        if(nunchuk_buttonZ()) z_Target = 200.0;
+        else if(nunchuk_buttonC()) z_Target = 100.0;
+        else z_Target = 150.0;
+    
+        coordinate_Calculator.set_Coordinate_Target(Value_To_Coordinate(nunchuk_X_Value)+150, Value_To_Coordinate(nunchuk_Y_Value), z_Target);
+        servo_Top.write(coordinate_Calculator.get_Servo_Top_Angle() * 180/PI + 90);
+        servo_Mid.write(coordinate_Calculator.get_Servo_Mid_Angle() * 180/PI + 90);
+        servo_Bot.write(coordinate_Calculator.get_Servo_Bot_Angle() * 180/PI + 90);    
+
+        /*
+        //coordinate_Calculator.set_Coordinate_Target(100.0, 100.0, 150.0);
+        coordinate_Calculator.set_Coordinate_Polar_Target(100.0, PI/4, 150);
+        
+        servo_Top.write(coordinate_Calculator.get_Servo_Top_Angle() * 180/PI + 90);
+        servo_Mid.write(coordinate_Calculator.get_Servo_Mid_Angle() * 180/PI + 90);
+        servo_Bot.write(coordinate_Calculator.get_Servo_Bot_Angle() * 180/PI + 90);
+      
+        Serial.print("X Value : ");
+        Serial.println(coordinate_Calculator.get_X_Coordinate());
+        Serial.print("Y Value : ");
+        Serial.println(coordinate_Calculator.get_Y_Coordinate());
+        Serial.print("Z Value : ");
+        Serial.println(coordinate_Calculator.get_Z_Coordinate());
+        Serial.print("Module Value : ");
+        Serial.println(coordinate_Calculator.get_Module_Coordinate());
+        Serial.print("Argument Value : ");
+        Serial.println(coordinate_Calculator.get_Argument_Coordinate() * 180/PI);*/
+      }
     }
   }
+  
 }
 
 //0.5Hz
@@ -67,4 +129,39 @@ void Clear_LCDScreen()
   lcd.print("                ");
   lcd.setCursor(0, 1);
   lcd.print("                ");
+}
+
+int16_t Joystick_DeadZone(int16_t value)
+{
+  int16_t deadzone_Min = 3;
+  int16_t deadzone_Max = 90;
+  
+  if( value<deadzone_Min && value>-deadzone_Min ) return 0;
+  if(value>deadzone_Max) return(deadzone_Max);
+  if(value<-deadzone_Max) return(-deadzone_Max);
+  return(value);
+}
+
+void Print_Joystick_Value(int16_t X, int16_t Y)
+{
+  Serial.print("X = ");
+  Serial.print(X);
+      
+  Serial.print("   Y = ");
+  Serial.println(Y);
+}
+
+void Calibrate_Servo()
+{
+  servo_Top.write(90);
+  servo_Mid.write(90);
+  servo_Bot.write(90);
+}
+
+float Value_To_Coordinate(int16_t value)
+{
+  int16_t value_Max = 90;
+  float coordinate_Max = 150;
+
+  return (value/90.0 * 150.0);
 }
