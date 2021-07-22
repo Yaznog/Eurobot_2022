@@ -1,3 +1,6 @@
+#ifndef OHMMETER_H
+#define OHMMETER_H
+
 class Ohmmeter
 {
   public:
@@ -20,3 +23,5 @@ class Ohmmeter
     
     float m_Error_Percent = 0.09;
 };
+
+#endif

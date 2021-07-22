@@ -9,7 +9,7 @@
 
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 Ohmmeter ohmmeter(9800.0, A0);
-Coordinate_Calculator coordinate_Calculator(100.0, 150.0);
+Coordinate_Calculator coordinate_Calculator(28.0, 100.0, 150.0);
 
 int16_t nunchuk_X_Value = 0;
 int16_t nunchuk_Y_Value = 0;
@@ -69,20 +69,15 @@ void loop()
         if(nunchuk_buttonZ()) z_Target = 200.0;
         else if(nunchuk_buttonC()) z_Target = 100.0;
         else z_Target = 150.0;
-    
-        coordinate_Calculator.set_Coordinate_Target(Value_To_Coordinate(nunchuk_X_Value)+150, Value_To_Coordinate(nunchuk_Y_Value), z_Target);
-        servo_Top.write(coordinate_Calculator.get_Servo_Top_Angle() * 180/PI + 90);
-        servo_Mid.write(coordinate_Calculator.get_Servo_Mid_Angle() * 180/PI + 90);
-        servo_Bot.write(coordinate_Calculator.get_Servo_Bot_Angle() * 180/PI + 90);    
 
+        coordinate_Calculator.set_Coordinate_Target(Value_To_Coordinate(nunchuk_X_Value)+100, Value_To_Coordinate(nunchuk_Y_Value), z_Target);
+        //coordinate_Calculator.set_Coordinate_Target(100.0, 0.0, 150.0);
+        //coordinate_Calculator.set_Coordinate_Polar_Target(100.0, PI/2.0, 150.0);
+  
+        servo_Top.write( Servo_Top_Forbidden_Value(coordinate_Calculator.get_Servo_Top_Angle() * 180/PI + 90) );
+        servo_Mid.write( Servo_Mid_Forbidden_Value(coordinate_Calculator.get_Servo_Mid_Angle() * 180/PI + 90) );
+        servo_Bot.write( Servo_Bot_Forbidden_Value(coordinate_Calculator.get_Servo_Bot_Angle() * 180/PI + 90) );
         /*
-        //coordinate_Calculator.set_Coordinate_Target(100.0, 100.0, 150.0);
-        coordinate_Calculator.set_Coordinate_Polar_Target(100.0, PI/4, 150);
-        
-        servo_Top.write(coordinate_Calculator.get_Servo_Top_Angle() * 180/PI + 90);
-        servo_Mid.write(coordinate_Calculator.get_Servo_Mid_Angle() * 180/PI + 90);
-        servo_Bot.write(coordinate_Calculator.get_Servo_Bot_Angle() * 180/PI + 90);
-      
         Serial.print("X Value : ");
         Serial.println(coordinate_Calculator.get_X_Coordinate());
         Serial.print("Y Value : ");
@@ -92,11 +87,16 @@ void loop()
         Serial.print("Module Value : ");
         Serial.println(coordinate_Calculator.get_Module_Coordinate());
         Serial.print("Argument Value : ");
-        Serial.println(coordinate_Calculator.get_Argument_Coordinate() * 180/PI);*/
+        Serial.println(coordinate_Calculator.get_Argument_Coordinate() * 180/PI);
+        Serial.print("servo_Top Angle : ");
+        Serial.println(coordinate_Calculator.get_Servo_Top_Angle() * 180/PI);
+        Serial.print("servo_Mid Angle : ");
+        Serial.println(coordinate_Calculator.get_Servo_Mid_Angle() * 180/PI);
+        Serial.print("servo_Bot Angle : ");
+        Serial.println(coordinate_Calculator.get_Servo_Bot_Angle() * 180/PI);*/
       }
     }
   }
-  
 }
 
 //0.5Hz
@@ -146,7 +146,6 @@ void Print_Joystick_Value(int16_t X, int16_t Y)
 {
   Serial.print("X = ");
   Serial.print(X);
-      
   Serial.print("   Y = ");
   Serial.println(Y);
 }
@@ -160,8 +159,28 @@ void Calibrate_Servo()
 
 float Value_To_Coordinate(int16_t value)
 {
-  int16_t value_Max = 90;
-  float coordinate_Max = 150;
+  float value_Max = 90;
+  float coordinate_Max = 100;
+  return (value/value_Max * coordinate_Max);
+}
 
-  return (value/90.0 * 150.0);
+float Servo_Top_Forbidden_Value(float value)
+{
+  if(value<10.0) return (float)10.0;
+  if(value>170.0) return (float)170.0;
+  return value;
+}
+
+float Servo_Mid_Forbidden_Value(float value)
+{
+  if(value<30.0) return (float)30.0;
+  if(value>140.0) return (float)140.0;
+  return value;
+}
+
+float Servo_Bot_Forbidden_Value(float value)
+{
+  if(value<30.0) return (float)30.0;
+  if(value>160.0) return (float)160.0;
+  return value;
 }
