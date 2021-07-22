@@ -9,7 +9,7 @@
 
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 Ohmmeter ohmmeter(9800.0, A0);
-Coordinate_Calculator coordinate_Calculator(28.0, 100.0, 150.0);
+Coordinate_Calculator coordinate_Calculator(41, 100, 171);
 
 int16_t nunchuk_X_Value = 0;
 int16_t nunchuk_Y_Value = 0;
@@ -66,12 +66,12 @@ void loop()
         nunchuk_X_Value = Joystick_DeadZone( nunchuk_joystickX() );
         nunchuk_Y_Value = Joystick_DeadZone( nunchuk_joystickY() );
     
-        if(nunchuk_buttonZ()) z_Target = 200.0;
+        if(nunchuk_buttonZ()) z_Target = 180.0;
         else if(nunchuk_buttonC()) z_Target = 100.0;
-        else z_Target = 150.0;
+        else z_Target = 140.0;
 
-        coordinate_Calculator.set_Coordinate_Target(Value_To_Coordinate(nunchuk_X_Value)+100, Value_To_Coordinate(nunchuk_Y_Value), z_Target);
-        //coordinate_Calculator.set_Coordinate_Target(100.0, 0.0, 150.0);
+        coordinate_Calculator.set_Coordinate_Target(Value_To_Coordinate(nunchuk_X_Value)+90, Value_To_Coordinate(nunchuk_Y_Value), z_Target);
+        //coordinate_Calculator.set_Coordinate_Target(100.0, 100.0, 150.0);
         //coordinate_Calculator.set_Coordinate_Polar_Target(100.0, PI/2.0, 150.0);
   
         servo_Top.write( Servo_Top_Forbidden_Value(coordinate_Calculator.get_Servo_Top_Angle() * 180/PI + 90) );
@@ -160,7 +160,7 @@ void Calibrate_Servo()
 float Value_To_Coordinate(int16_t value)
 {
   float value_Max = 90;
-  float coordinate_Max = 100;
+  float coordinate_Max = 90;
   return (value/value_Max * coordinate_Max);
 }
 

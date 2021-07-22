@@ -49,8 +49,8 @@ void Coordinate_Calculator::set_Coordinate_Target(float x, float y, float z)
   m_Y_Coordinate = y;
   m_Z_Coordinate = z;
 
-  m_Module_Coordinate = sqrt( square(x) + square(y) );
-  m_Argument_Coordinate = acos(x/m_Module_Coordinate);
+  m_Module_Coordinate = sqrt( square(x) + square(y) ) ;
+  m_Argument_Coordinate = asin(y/m_Module_Coordinate);
 }
 
 void Coordinate_Calculator::set_Coordinate_Polar_Target(float module, float argument, float z)
