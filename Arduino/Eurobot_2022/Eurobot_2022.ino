@@ -1,10 +1,28 @@
-#include "Ohmmeter.h"
-#include "Toolbox.h"
 #include <LiquidCrystal.h>
+#include <Servo.h>
+#include <Wire.h>
+#include <math.h>
+
+#include "Ohmmeter.h"
+#include "Nunchuk.h"
+#include "Coordinate_Calculator.h"
 
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-Toolbox toolbox(1);
 Ohmmeter ohmmeter(9800.0, A0);
+Coordinate_Calculator coordinate_Calculator(41, 100, 171);
+
+int16_t nunchuk_X_Value = 0;
+int16_t nunchuk_Y_Value = 0;
+
+float x_Target;
+float y_Target;
+float z_Target;
+float module_Target;
+float argument_Target;
+
+Servo servo_Top;
+Servo servo_Mid;
+Servo servo_Bot;
 
 void setup() 
 {
@@ -24,15 +42,59 @@ void setup()
 
   lcd.begin(16, 2);
   Serial.begin(9600);
+
+  Wire.begin();
+  nunchuk_init();
+  servo_Top.attach(9);
+  servo_Mid.attach(10);
+  servo_Bot.attach(11);
 }
 
 void loop() 
 {
-  for(int power=0;power<=6;power++)
+  Calibrate_Servo();
+  while(true)
   {
-    for(int index=0;index<12;index++)
+    if (nunchuk_read())
     {
-      Serial.println( ohmmeter.E12[index] * toolbox.Power(10.0,power) );
+      if(nunchuk_accelY_raw()>600)
+      {
+        Calibrate_Servo();
+      }
+      else 
+      {
+        nunchuk_X_Value = Joystick_DeadZone( nunchuk_joystickX() );
+        nunchuk_Y_Value = Joystick_DeadZone( nunchuk_joystickY() );
+    
+        if(nunchuk_buttonZ()) z_Target = 180.0;
+        else if(nunchuk_buttonC()) z_Target = 100.0;
+        else z_Target = 140.0;
+
+        coordinate_Calculator.set_Coordinate_Target(Value_To_Coordinate(nunchuk_X_Value)+90, Value_To_Coordinate(nunchuk_Y_Value), z_Target);
+        //coordinate_Calculator.set_Coordinate_Target(100.0, 100.0, 150.0);
+        //coordinate_Calculator.set_Coordinate_Polar_Target(100.0, PI/2.0, 150.0);
+  
+        servo_Top.write( Servo_Top_Forbidden_Value(coordinate_Calculator.get_Servo_Top_Angle() * 180/PI + 90) );
+        servo_Mid.write( Servo_Mid_Forbidden_Value(coordinate_Calculator.get_Servo_Mid_Angle() * 180/PI + 90) );
+        servo_Bot.write( Servo_Bot_Forbidden_Value(coordinate_Calculator.get_Servo_Bot_Angle() * 180/PI + 90) );
+        /*
+        Serial.print("X Value : ");
+        Serial.println(coordinate_Calculator.get_X_Coordinate());
+        Serial.print("Y Value : ");
+        Serial.println(coordinate_Calculator.get_Y_Coordinate());
+        Serial.print("Z Value : ");
+        Serial.println(coordinate_Calculator.get_Z_Coordinate());
+        Serial.print("Module Value : ");
+        Serial.println(coordinate_Calculator.get_Module_Coordinate());
+        Serial.print("Argument Value : ");
+        Serial.println(coordinate_Calculator.get_Argument_Coordinate() * 180/PI);
+        Serial.print("servo_Top Angle : ");
+        Serial.println(coordinate_Calculator.get_Servo_Top_Angle() * 180/PI);
+        Serial.print("servo_Mid Angle : ");
+        Serial.println(coordinate_Calculator.get_Servo_Mid_Angle() * 180/PI);
+        Serial.print("servo_Bot Angle : ");
+        Serial.println(coordinate_Calculator.get_Servo_Bot_Angle() * 180/PI);*/
+      }
     }
   }
 }
@@ -67,4 +129,58 @@ void Clear_LCDScreen()
   lcd.print("                ");
   lcd.setCursor(0, 1);
   lcd.print("                ");
+}
+
+int16_t Joystick_DeadZone(int16_t value)
+{
+  int16_t deadzone_Min = 3;
+  int16_t deadzone_Max = 90;
+  
+  if( value<deadzone_Min && value>-deadzone_Min ) return 0;
+  if(value>deadzone_Max) return(deadzone_Max);
+  if(value<-deadzone_Max) return(-deadzone_Max);
+  return(value);
+}
+
+void Print_Joystick_Value(int16_t X, int16_t Y)
+{
+  Serial.print("X = ");
+  Serial.print(X);
+  Serial.print("   Y = ");
+  Serial.println(Y);
+}
+
+void Calibrate_Servo()
+{
+  servo_Top.write(90);
+  servo_Mid.write(90);
+  servo_Bot.write(90);
+}
+
+float Value_To_Coordinate(int16_t value)
+{
+  float value_Max = 90;
+  float coordinate_Max = 90;
+  return (value/value_Max * coordinate_Max);
+}
+
+float Servo_Top_Forbidden_Value(float value)
+{
+  if(value<10.0) return (float)10.0;
+  if(value>170.0) return (float)170.0;
+  return value;
+}
+
+float Servo_Mid_Forbidden_Value(float value)
+{
+  if(value<30.0) return (float)30.0;
+  if(value>140.0) return (float)140.0;
+  return value;
+}
+
+float Servo_Bot_Forbidden_Value(float value)
+{
+  if(value<30.0) return (float)30.0;
+  if(value>160.0) return (float)160.0;
+  return value;
 }

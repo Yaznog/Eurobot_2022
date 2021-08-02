@@ -1,8 +1,6 @@
 #include "Ohmmeter.h"
-#include "Toolbox.h"
 #include <Arduino.h>
-
-Toolbox toolbox_Ohmmeter(1);
+#include <math.h>
 
 Ohmmeter::Ohmmeter(float KnownResistor_Value, int Out_Tension_Pin)
 {
@@ -43,7 +41,7 @@ float Ohmmeter::get_Normalized_Value(float value)
   {
     for(int index=0;index<12;index++)
     {
-      if( value>(E12[index] * toolbox_Ohmmeter.Power(10.0,power) * (1-m_Error_Percent)) && value<( E12[index] * toolbox_Ohmmeter.Power(10.0,power) * (1+m_Error_Percent) ) ) return (E12[index]* toolbox_Ohmmeter.Power(10.0,power) );
+      if( value>(E12[index] * pow(10.0,power) * (1-m_Error_Percent)) && value<( E12[index] * pow(10.0,power) * (1+m_Error_Percent) ) ) return (E12[index]* pow(10.0,power) );
     }
   }
   return 35505;
