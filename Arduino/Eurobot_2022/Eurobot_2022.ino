@@ -24,6 +24,11 @@ Servo servo_Top;
 Servo servo_Mid;
 Servo servo_Bot;
 
+int16_t servo_Top_Offset = 0;
+int16_t servo_Mid_Offset = -4;
+int16_t servo_Bot_Offset = -11;
+
+
 void setup() 
 {
   SREG |= 128;
@@ -74,9 +79,9 @@ void loop()
         //coordinate_Calculator.set_Coordinate_Target(100.0, 100.0, 150.0);
         //coordinate_Calculator.set_Coordinate_Polar_Target(100.0, PI/2.0, 150.0);
   
-        servo_Top.write( Servo_Top_Forbidden_Value(coordinate_Calculator.get_Servo_Top_Angle() * 180/PI + 90) );
-        servo_Mid.write( Servo_Mid_Forbidden_Value(coordinate_Calculator.get_Servo_Mid_Angle() * 180/PI + 90) );
-        servo_Bot.write( Servo_Bot_Forbidden_Value(coordinate_Calculator.get_Servo_Bot_Angle() * 180/PI + 90) );
+        servo_Top.write( Servo_Top_Forbidden_Value(coordinate_Calculator.get_Servo_Top_Angle() * 180/PI + 90) + servo_Top_Offset);
+        servo_Mid.write( Servo_Mid_Forbidden_Value(coordinate_Calculator.get_Servo_Mid_Angle() * 180/PI + 90) + servo_Mid_Offset);
+        servo_Bot.write( Servo_Bot_Forbidden_Value(coordinate_Calculator.get_Servo_Bot_Angle() * 180/PI + 90) + servo_Bot_Offset);
         /*
         Serial.print("X Value : ");
         Serial.println(coordinate_Calculator.get_X_Coordinate());
@@ -152,9 +157,9 @@ void Print_Joystick_Value(int16_t X, int16_t Y)
 
 void Calibrate_Servo()
 {
-  servo_Top.write(90);
-  servo_Mid.write(90);
-  servo_Bot.write(90);
+  servo_Top.write(90 + servo_Top_Offset);
+  servo_Mid.write(90 + servo_Mid_Offset);
+  servo_Bot.write(90 + servo_Bot_Offset);
 }
 
 float Value_To_Coordinate(int16_t value)
