@@ -45,7 +45,6 @@ static void nunchuk_init_power()
 
 static void nunchuk_init() 
 {
-
 #ifdef NUNCHUK_DISABLE_ENCRYPTION
     I2C_START(NUNCHUK_ADDRESS);
     I2C_WRITE(0xF0);
@@ -196,5 +195,30 @@ static float nunchuk_roll()
 { // tilt-x
   return atan2((float) nunchuk_accelX(), (float) nunchuk_accelZ());
 }
+
+static int16_t joystick_DeadZone(int16_t value)
+{
+  int16_t deadzone_Min = 5;
+  int16_t deadzone_Max = 90;
+  
+  if( value<deadzone_Min && value>-deadzone_Min ) return 0;
+  if(value>deadzone_Max) return(deadzone_Max);
+  if(value<-deadzone_Max) return(-deadzone_Max);
+  return(value);
+}
+
+static boolean JoystickForward()
+{
+
+  int16_t nunchuk_X_Value = joystick_DeadZone(nunchuk_joystickX());
+  int16_t nunchuk_Y_Value = joystick_DeadZone(nunchuk_joystickY());
+  
+  float angle = atan2(nunchuk_Y_Value, nunchuk_X_Value);
+
+  if( (angle <= (3*PI/4) ) && (angle >= (PI/4)) ) return true;
+  return false;
+}
+
+
 
 #endif
