@@ -1,12 +1,18 @@
 #include <Wire.h>
 #include "Robot.h"
-#include <LiquidCrystal.h>
+#include "HCPCA9685.h"
+//#include <LiquidCrystal.h>
 //#include "Ohmmeter.h"
 #include "Nunchuk.h"
 
+#define  I2CAdd 0x40
+
+HCPCA9685 *hcpca9685(I2CAdd);
+Robot *robot;
 //LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 //Ohmmeter ohmmeter(9800.0, A0);
-Robot *robot;
+
+uint16_t servo_pulse_duration;
 
 boolean jack;
 int8_t jack_Pin = 2;
@@ -17,25 +23,25 @@ float z_Target;
 float module_Target;
 float argument_Target;
 
-#define LEG_FRONT_LEFT 0
-#define LEG_FRONT_RIGHT 1
-#define LEG_BACK_LEFT 2
-#define LEG_BACK_RIGHT 3
-
 void setup() 
 {
   pinMode(jack_Pin, INPUT);
   Serial.begin(9600);
   Serial.println("SETUP");
+  hcpca9685->Init(SERVO_MODE);
+  hcpca9685->SetPeriodFreq(50);
+  hcpca9685->Sleep(false);
   //lcd.begin(16, 2);
   Wire.begin();
   nunchuk_init();
-  robot = new Robot();
+  robot = new Robot(hcpca9685);
 }
 
 void loop() 
 {
   Serial.println("loop");
+  int c = 1;
+  unsigned int Pos;
   
   if (nunchuk_read())
   {
@@ -45,12 +51,38 @@ void loop()
     }
     else if(nunchuk_buttonZ())
     {
-      robot->MoveOneLegToCoordinatePolar(100, 0, 100, LEG_FRONT_LEFT);
-      robot->MoveOneLegToCoordinatePolar(100, 0, 100, LEG_FRONT_RIGHT);
+      robot->raiseAllLegs();
     }
     else if(JoystickForward())
     {
-      robot->Walk();
+      
+      /*
+      for(Pos = 100; Pos < 300; Pos++)
+      {
+        hcpca9685->Servo(0, Pos);
+        delay(10);
+      }*/
+      //Serial.println("joystick");
+      //robot->walkForward();
+    }
+    else if(JoystickRearward())
+    {
+
+      /*
+      for(Pos = 300; Pos >= 100; Pos--)
+      {
+        hcpca9685.Servo(0, Pos);
+        delay(10);
+      }*/
+      //robot->walkRearward();
+    }
+    else if(JoystickLeftSide())
+    {
+      //robot->rotateLeftSide();
+    }
+    else if(JoystickRightSide())
+    {
+      //robot->rotateRightSide();
     }
   }
 }

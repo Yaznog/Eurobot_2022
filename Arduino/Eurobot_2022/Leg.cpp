@@ -38,6 +38,13 @@ void Leg::Calibrate_Servo()
   mServoBot->write(90 + mServoBotOffset);
 }
 
+void Leg::raiseLeg()
+{
+  mServoTop->write(90 + mServoMidOffset);
+  mServoMid->write(0 + mServoMidOffset);
+  mServoBot->write(180 + mServoBotOffset);
+}
+
 // Coordinates---------------------------------------------------
 
 void Leg::SetCoordinateTarget(float x, float y, float z)

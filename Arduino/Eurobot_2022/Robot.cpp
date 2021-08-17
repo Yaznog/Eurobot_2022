@@ -3,22 +3,27 @@
 #define NEUTRAL_PIN -1
 #define NEUTRAL_OFFSET 0
 
-Robot::Robot()
+Robot::Robot(HCPCA9685 *hcpca9685)
 {
   Serial.println("new Robot");
   
   // Create leg (pinTop, pinMid, pinBot, offsetTop, offsetMid, offsetBot)
-  legFrontLeft  = new Leg(3, NEUTRAL_PIN, NEUTRAL_PIN, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET);
-  legFrontRight = new Leg(9, 10, 11, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET/*15, -4,  -11*/);
-  legBackLeft   = new Leg(5, NEUTRAL_PIN, NEUTRAL_PIN, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET);
+  legFrontLeft  = new Leg(2, 3, 4, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET);
+  legFrontRight = new Leg(5, 6, 7, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET/*15, -4,  -11*/);
+  legBackLeft   = new Leg(NEUTRAL_PIN, NEUTRAL_PIN, NEUTRAL_PIN, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET);
   legBackRight  = new Leg(NEUTRAL_PIN, NEUTRAL_PIN, NEUTRAL_PIN, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET);
 
   mLastMillis = millis();
-  
+  /*
   WalkOneLeg(-1, 0);
   WalkOneLeg(-1, 1);
   WalkOneLeg(-1, 2);
-  WalkOneLeg(-1, 3);
+  WalkOneLeg(-1, 3);*/
+  
+  WalkOneLeg(0, LEG_FRONT_LEFT);
+  WalkOneLeg(0, 1);
+  WalkOneLeg(0, 2);
+  WalkOneLeg(0, 3);
 }
 
 Robot::~Robot()
@@ -31,7 +36,7 @@ Robot::~Robot()
 
 void Robot::MoveOneLegToCoordinate(float x, float y, float z, uint8_t leg)
 {
-  if(leg==0) 
+  if(leg==LEG_FRONT_LEFT) 
   {
     legFrontLeft->SetCoordinateTarget(x, y, z);
     legFrontLeft->MoveLegToTarget();
@@ -55,7 +60,7 @@ void Robot::MoveOneLegToCoordinate(float x, float y, float z, uint8_t leg)
 
 void Robot::MoveOneLegToCoordinatePolar(float module, float argument, float z, uint8_t leg)
 {
-  if(leg==0) 
+  if(leg==LEG_FRONT_LEFT) 
   {
     legFrontLeft->SetCoordinatePolarTarget(module, argument, z);
     legFrontLeft->MoveLegToTarget();
@@ -77,6 +82,22 @@ void Robot::MoveOneLegToCoordinatePolar(float module, float argument, float z, u
   }
 }
 
+void Robot::raiseOneLeg(uint8_t leg)
+{
+  if(leg==LEG_FRONT_LEFT)      legFrontLeft->raiseLeg();
+  else if(leg==1) legFrontRight->raiseLeg();
+  else if(leg==2) legBackLeft->raiseLeg();
+  else if(leg==3) legBackRight->raiseLeg();
+}
+
+void Robot::raiseAllLegs()
+{
+  legFrontLeft->raiseLeg();
+  legFrontRight->raiseLeg();
+  legBackLeft->raiseLeg();
+  legBackRight->raiseLeg();
+}
+
 void Robot::WalkOneLeg(uint8_t walkStep, uint8_t leg)
 {
   if(walkStep==-1)      MoveOneLegToCoordinate(mMovementStop.x,   mMovementStop.y,  mMovementStop.z,  leg);
@@ -88,55 +109,113 @@ void Robot::WalkOneLeg(uint8_t walkStep, uint8_t leg)
   mWalkStep[leg] = walkStep;
 }
 
-void Robot::Walk()
+void Robot::walkForward()
 {
   if(millis() - mDeltaT >= mLastMillis)
   {
-    Serial.print("Walk : ");
+    Serial.println("etape");
+  Serial.println(mWalkStep[1]);
+    switch(mWalkStep[LEG_FRONT_LEFT])
+    {/*
+      case -1:// Millieu bas
+        WalkOneLeg(1,0);
+        WalkOneLeg(2,1);
+        WalkOneLeg(3,2);
+        WalkOneLeg(0,3);
+        break;*/
+        
+      case 0:// Arrière bas
+        WalkOneLeg(1,LEG_FRONT_LEFT);
+        WalkOneLeg(3,1);
+        WalkOneLeg(0,2);
+        WalkOneLeg(2,3);
+        break;
+        
+      case 1:// Millieu haut
+        WalkOneLeg(2,LEG_FRONT_LEFT);
+        WalkOneLeg(0,1);
+        WalkOneLeg(1,2);
+        WalkOneLeg(3,3);
+        break;
+        
+      case 2:// Avant bas
+        WalkOneLeg(3,LEG_FRONT_LEFT);
+        WalkOneLeg(1,1);
+        WalkOneLeg(2,2);
+        WalkOneLeg(0,3);
+        break;
+        
+      case 3:// Millieu bas
+        WalkOneLeg(0,LEG_FRONT_LEFT);
+        WalkOneLeg(2,1);
+        WalkOneLeg(3,2);
+        WalkOneLeg(1,3);
+        break;
+    }
+    //Serial.println(mWalkStep[1]);
+    mLastMillis = millis();
+  }
+}
+
+
+void Robot::walkRearward()
+{/*
+  if(millis() - mDeltaT >= mLastMillis)
+  {
     switch(mWalkStep[1])
     {
-      case -1:
+      case -1:// Millieu bas
         WalkOneLeg(1,0);
-        WalkOneLeg(1,1);
-        WalkOneLeg(1,2);
-        WalkOneLeg(1,3);
-        Serial.println("-1");
-        break;
-        
-      case 0:
-        WalkOneLeg(1,0);
-        WalkOneLeg(1,1);
-        WalkOneLeg(1,2);
-        WalkOneLeg(1,3);
-        Serial.println("0");
-        break;
-        
-      case 1:
-        WalkOneLeg(2,0);
         WalkOneLeg(2,1);
-        WalkOneLeg(2,2);
-        WalkOneLeg(2,3);
-        Serial.println("1");
-        break;
-        
-      case 2:
-        WalkOneLeg(3,0);
-        WalkOneLeg(3,1);
-        WalkOneLeg(3,2);
+        WalkOneLeg(1,2);
         WalkOneLeg(3,3);
-        Serial.println("2");
+        //Serial.println("-1");
         break;
         
-      case 3:
-        WalkOneLeg(0,0);
-        WalkOneLeg(0,1);
+      case 0:// Arrière bas
+        WalkOneLeg(3,0);
+        WalkOneLeg(2,1);
         WalkOneLeg(0,2);
+        WalkOneLeg(3,3);
+        //Serial.println("0");
+        break;
+        
+      case 1:// Millieu haut
+        WalkOneLeg(0,0);
+        WalkOneLeg(3,1);
+        WalkOneLeg(1,2);
         WalkOneLeg(0,3);
-        Serial.println("3");
+        //Serial.println("1");
+        break;
+        
+      case 2:// Avant bas
+        WalkOneLeg(1,0);
+        WalkOneLeg(0,1);
+        WalkOneLeg(2,2);
+        WalkOneLeg(1,3);
+        //Serial.println("2");
+        break;
+        
+      case 3:// Millieu bas
+        WalkOneLeg(2,0);
+        WalkOneLeg(1,1);
+        WalkOneLeg(3,2);
+        WalkOneLeg(2,3);
+        //Serial.println("3");
         break;
     }
     mLastMillis = millis();
-  }
+  }*/
+}
+
+void Robot::rotateLeftSide()
+{
+  
+}
+
+void Robot::rotateRightSide()
+{
+  
 }
 
 void Robot::CalibrateOneLeg(uint8_t leg)

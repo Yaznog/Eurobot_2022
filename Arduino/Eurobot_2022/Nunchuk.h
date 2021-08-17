@@ -45,6 +45,7 @@ static void nunchuk_init_power()
 
 static void nunchuk_init() 
 {
+  
 #ifdef NUNCHUK_DISABLE_ENCRYPTION
     I2C_START(NUNCHUK_ADDRESS);
     I2C_WRITE(0xF0);
@@ -77,7 +78,6 @@ static void nunchuk_init()
     }
     I2C_STOP();
     Serial.println("");
-
     //delay(100);
 #endif
 
@@ -209,16 +209,54 @@ static int16_t joystick_DeadZone(int16_t value)
 
 static boolean JoystickForward()
 {
+  
+  //Serial.println("joystick fo");
+  int16_t nunchuk_X_Value = joystick_DeadZone(nunchuk_joystickX());
+  int16_t nunchuk_Y_Value = joystick_DeadZone(nunchuk_joystickY());
+  
+  float angle = atan2(nunchuk_Y_Value, nunchuk_X_Value);
+
+  if( (angle <= (3*PI/4) ) && (angle >= (PI/4)) ){
+      //Serial.println("true");
+    return true;
+  }
+      //Serial.println("false");
+  return false;
+}
+
+static boolean JoystickRearward()
+{
+  int16_t nunchuk_X_Value = joystick_DeadZone(nunchuk_joystickX());
+  int16_t nunchuk_Y_Value = joystick_DeadZone(nunchuk_joystickY());
+  
+  float angle = atan2(nunchuk_Y_Value, nunchuk_X_Value);
+  
+  if( (angle <= (-PI/4) ) && (angle >= (-3*PI/4)) ) return true;
+  return false;
+}
+
+static boolean JoystickLeftSide()
+{
+  int16_t nunchuk_X_Value = joystick_DeadZone(nunchuk_joystickX());
+  int16_t nunchuk_Y_Value = joystick_DeadZone(nunchuk_joystickY());
+  
+  float angle = atan2(nunchuk_Y_Value, nunchuk_X_Value);
+
+  if( (angle <= (-3*PI/4) ) || (angle >= (3*PI/4)) ) return true;
+  return false;
+}
+
+static boolean JoystickRightSide()
+{
 
   int16_t nunchuk_X_Value = joystick_DeadZone(nunchuk_joystickX());
   int16_t nunchuk_Y_Value = joystick_DeadZone(nunchuk_joystickY());
   
   float angle = atan2(nunchuk_Y_Value, nunchuk_X_Value);
 
-  if( (angle <= (3*PI/4) ) && (angle >= (PI/4)) ) return true;
+  if( (angle <= (PI/4) ) && (angle >= (-PI/4)) && (nunchuk_X_Value!=0 || nunchuk_Y_Value!=0)) return true;
   return false;
 }
-
 
 
 #endif

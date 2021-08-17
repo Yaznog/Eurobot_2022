@@ -13,6 +13,7 @@ class Leg
     
     void SetServoOffset(int16_t servoTopOffset, int16_t servoMidOffset, int16_t servoBotOffset);
     void Calibrate_Servo();
+    void raiseLeg();
     
     void SetCoordinateTarget(float x, float y, float z);
     void SetCoordinatePolarTarget(float module, float argument, float z);
@@ -36,9 +37,9 @@ class Leg
     int16_t mServoMidOffset = 0;
     int16_t mServoBotOffset = 0;
 
-    const unsigned int mLegTopLength = 41;
-    const unsigned int mLegMidLength = 100;
-    const unsigned int mLegBotLength = 171;
+    const unsigned int mLegTopLength = 35;
+    const unsigned int mLegMidLength = 80;
+    const unsigned int mLegBotLength = 166;
 
     const int8_t mServoTopForbiddenValue = 10;
     const int8_t mServoMidForbiddenValue = 30;
