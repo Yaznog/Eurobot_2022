@@ -1,6 +1,6 @@
 #include "Leg.h"
 
-Leg::Leg(int8_t servoTopPin, int8_t servoMidPin, int8_t servoBotPin, int16_t servoTopOffset, int16_t servoMidOffset, int16_t servoBotOffset)
+Leg::Leg(int8_t servoTopPin, int8_t servoMidPin, int8_t servoBotPin, int16_t servoTopOffset, int16_t servoMidOffset, int16_t servoBotOffset, HCPCA9685 *hcpca9685)
 {
   Serial.println("new Leg");
   

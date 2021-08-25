@@ -3,12 +3,13 @@
 
 #include <Arduino.h>
 #include <Servo.h>
+#include "HCPCA9685.h"
 
 class Leg
 {
   public:
   
-    Leg(int8_t servoTopPin, int8_t servoMidPin, int8_t servoBotPin, int16_t servoTopOffset, int16_t servoMidOffset, int16_t servoBotOffset);
+    Leg(int8_t servoTopPin, int8_t servoMidPin, int8_t servoBotPin, int16_t servoTopOffset, int16_t servoMidOffset, int16_t servoBotOffset, HCPCA9685 *hcpca9685);
     ~Leg();
     
     void SetServoOffset(int16_t servoTopOffset, int16_t servoMidOffset, int16_t servoBotOffset);

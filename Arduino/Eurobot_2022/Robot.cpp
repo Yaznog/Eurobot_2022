@@ -7,11 +7,11 @@ Robot::Robot(HCPCA9685 *hcpca9685)
 {
   Serial.println("new Robot");
   
-  // Create leg (pinTop, pinMid, pinBot, offsetTop, offsetMid, offsetBot)
-  legFrontLeft  = new Leg(2, 3, 4, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET);
-  legFrontRight = new Leg(5, 6, 7, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET/*15, -4,  -11*/);
-  legBackLeft   = new Leg(NEUTRAL_PIN, NEUTRAL_PIN, NEUTRAL_PIN, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET);
-  legBackRight  = new Leg(NEUTRAL_PIN, NEUTRAL_PIN, NEUTRAL_PIN, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET);
+  // Create leg (pinTop, pinMid, pinBot, offsetTop, offsetMid, offsetBot, hcpca9685)
+  legFrontLeft  = new Leg(2, 3, 4, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET, hcpca9685);
+  legFrontRight = new Leg(5, 6, 7, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET, hcpca9685);
+  legBackLeft   = new Leg(NEUTRAL_PIN, NEUTRAL_PIN, NEUTRAL_PIN, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET, hcpca9685);
+  legBackRight  = new Leg(NEUTRAL_PIN, NEUTRAL_PIN, NEUTRAL_PIN, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET, hcpca9685);
 
   mLastMillis = millis();
   /*

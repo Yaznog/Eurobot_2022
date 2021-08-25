@@ -7,7 +7,7 @@
 
 #define  I2CAdd 0x40
 
-HCPCA9685 *hcpca9685(I2CAdd);
+HCPCA9685 *hcpca9685;
 Robot *robot;
 //LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 //Ohmmeter ohmmeter(9800.0, A0);
@@ -28,8 +28,9 @@ void setup()
   pinMode(jack_Pin, INPUT);
   Serial.begin(9600);
   Serial.println("SETUP");
+  hcpca9685 = new HCPCA9685(I2CAdd);
   hcpca9685->Init(SERVO_MODE);
-  hcpca9685->SetPeriodFreq(50);
+  //hcpca9685->SetPeriodFreq(50);
   hcpca9685->Sleep(false);
   //lcd.begin(16, 2);
   Wire.begin();
@@ -41,7 +42,6 @@ void loop()
 {
   Serial.println("loop");
   int c = 1;
-  unsigned int Pos;
   
   if (nunchuk_read())
   {
@@ -55,25 +55,12 @@ void loop()
     }
     else if(JoystickForward())
     {
-      
-      /*
-      for(Pos = 100; Pos < 300; Pos++)
-      {
-        hcpca9685->Servo(0, Pos);
-        delay(10);
-      }*/
-      //Serial.println("joystick");
+      //Serial.println("Forward");
       //robot->walkForward();
     }
     else if(JoystickRearward())
     {
-
-      /*
-      for(Pos = 300; Pos >= 100; Pos--)
-      {
-        hcpca9685.Servo(0, Pos);
-        delay(10);
-      }*/
+      //Serial.println("Rearward");
       //robot->walkRearward();
     }
     else if(JoystickLeftSide())
@@ -88,7 +75,6 @@ void loop()
 }
 
 // Archive --------------------------------------------
-
 
 /*
 void Print_Joystick_Value(int16_t X, int16_t Y)
