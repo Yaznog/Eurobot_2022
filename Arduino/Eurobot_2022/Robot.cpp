@@ -5,7 +5,7 @@
 
 Robot::Robot(HCPCA9685 *hcpca9685)
 {
-  Serial.println("new Robot");
+  //Serial.println("new Robot");
   
   // Create leg (pinTop, pinMid, pinBot, offsetTop, offsetMid, offsetBot, hcpca9685)
   legFrontLeft  = new Leg(2, 3, 4, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET, hcpca9685);

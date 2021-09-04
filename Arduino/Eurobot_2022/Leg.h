@@ -2,7 +2,7 @@
 #define LEG_H
 
 #include <Arduino.h>
-#include <Servo.h>
+//#include <Servo.h>
 #include "HCPCA9685.h"
 
 class Leg
@@ -29,10 +29,16 @@ class Leg
     void marche(int leg);
     
   private:
-    
+    /*
     Servo *mServoTop;
     Servo *mServoMid;
-    Servo *mServoBot;
+    Servo *mServoBot;*/
+
+    HCPCA9685 *mHCPCA9685;
+    
+    int8_t mServoTopPin;
+    int8_t mServoMidPin;
+    int8_t mServoBotPin;
   
     int16_t mServoTopOffset = 0;
     int16_t mServoMidOffset = 0;
