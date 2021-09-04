@@ -1,16 +1,16 @@
 #include <Wire.h>
 #include "Robot.h"
 #include "HCPCA9685.h"
-//#include <LiquidCrystal.h>
-//#include "Ohmmeter.h"
+#include <LiquidCrystal.h>
+#include "Ohmmeter.h"
 #include "Nunchuk.h"
 
 #define  I2CAdd 0x40
 
 HCPCA9685 *hcpca9685;
 Robot *robot;
-//LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-//Ohmmeter ohmmeter(9800.0, A0);
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+Ohmmeter ohmmeter(9800.0, A0);
 
 uint16_t servo_pulse_duration;
 
@@ -32,7 +32,7 @@ void setup()
   hcpca9685->Init(SERVO_MODE);
   //hcpca9685->SetPeriodFreq(50);
   hcpca9685->Sleep(false);
-  //lcd.begin(16, 2);
+  lcd.begin(16, 2);
   Wire.begin();
   nunchuk_init();
   robot = new Robot(hcpca9685);
