@@ -31,6 +31,7 @@ class Robot
     void raiseOneLeg(uint8_t leg);
     void raiseAllLegs();
     void WalkOneLeg(uint8_t walkStep, uint8_t leg);
+    void WalkOneLegPolar(uint8_t walkPolarStep, uint8_t leg);
     void walkForward();
     void walkRearward();
     void rotateLeftSide();
@@ -62,11 +63,12 @@ class Robot
     const Coordinate mMovementPolarStep2{0,0,120,90,PI/4};// Avant bas
     const Coordinate mMovementPolarStep3{0,0,120,90,0};// Millieu bas
 
-    const int mDeltaT = 800;// Time between 2 movements in milliseconds
+    const int mDeltaT = 500;// Time between 2 movements in milliseconds
     float mLastMillis;
 
     int8_t mStartingStep[4];
     int8_t mWalkStep[4];// One foreache leg
+    int8_t mWalkPolarStep[4];// One foreache leg
     int8_t mStoppingStep[4];
 };
 

@@ -5,6 +5,11 @@
 //#include <Servo.h>
 #include "HCPCA9685.h"
 
+#define LEG_FRONT_LEFT 0
+#define LEG_FRONT_RIGHT 1
+#define LEG_BACK_LEFT 2
+#define LEG_BACK_RIGHT 3
+
 class Leg
 {
   public:
@@ -14,7 +19,7 @@ class Leg
     
     void SetServoOffset(int16_t servoTopOffset, int16_t servoMidOffset, int16_t servoBotOffset);
     void Calibrate_Servo();
-    void raiseLeg();
+    void raiseLeg(uint8_t leg);
     
     void SetCoordinateTarget(float x, float y, float z);
     void SetCoordinatePolarTarget(float module, float argument, float z);
@@ -24,7 +29,7 @@ class Leg
     float GetServoBotAngle();
     float MaxAngle(float value);
         
-    void MoveLegToTarget();
+    void MoveLegToTarget(uint8_t leg);
 
     void marche(int leg);
     

@@ -9,6 +9,10 @@ Leg::Leg(int8_t servoTopPin, int8_t servoMidPin, int8_t servoBotPin, int16_t ser
   mServoTopPin = servoTopPin;
   mServoMidPin = servoMidPin;
   mServoBotPin = servoBotPin;
+
+  mServoTopOffset = servoTopOffset;
+  mServoMidOffset = servoMidOffset;
+  mServoBotOffset = servoBotOffset;
   /*
   mServoTop = new Servo();
   mServoMid = new Servo();
@@ -49,15 +53,22 @@ void Leg::Calibrate_Servo()
   mServoBot->write(90 + mServoBotOffset);*/
 }
 
-void Leg::raiseLeg()
+void Leg::raiseLeg(uint8_t leg)
 {
-  mHCPCA9685->Servo(mServoTopPin, 90 + mServoMidOffset);
-  mHCPCA9685->Servo(mServoMidPin, 0 + mServoMidOffset);
-  mHCPCA9685->Servo(mServoBotPin, 180 + mServoBotOffset);
-  /*
-  mServoTop->write(90 + mServoMidOffset);
-  mServoMid->write(0 + mServoMidOffset);
-  mServoBot->write(180 + mServoBotOffset);*/
+  mHCPCA9685->Servo(mServoTopPin, 180 + mServoMidOffset);
+  int16_t highValue = 360;
+  int16_t lowValue = 0;
+  
+  if(leg==LEG_FRONT_LEFT || leg==LEG_BACK_RIGHT)
+  {
+    mHCPCA9685->Servo(mServoMidPin, -(lowValue - 180) + 180 + mServoMidOffset);
+    mHCPCA9685->Servo(mServoBotPin, -(highValue - 180) + 180 + mServoBotOffset);
+  }
+  else if(leg==LEG_FRONT_RIGHT || leg==LEG_BACK_LEFT)
+  {
+    mHCPCA9685->Servo(mServoMidPin, lowValue + mServoMidOffset);
+    mHCPCA9685->Servo(mServoBotPin, highValue + mServoBotOffset);
+  }
 }
 
 // Coordinates---------------------------------------------------
@@ -111,12 +122,25 @@ float Leg::MaxAngle(float value)
 
 // Movement Function----------------------------------------
 
-void Leg::MoveLegToTarget()
-{
+void Leg::MoveLegToTarget(uint8_t leg)
+{/*
   mHCPCA9685->Servo(mServoTopPin, (GetServoTopAngle() * 180/PI + 90)*2 + mServoTopOffset );
   mHCPCA9685->Servo(mServoMidPin, (GetServoMidAngle() * 180/PI + 90)*2 + mServoMidOffset );
-  mHCPCA9685->Servo(mServoBotPin, (GetServoBotAngle() * 180/PI + 90)*2 + mServoBotOffset );
+  mHCPCA9685->Servo(mServoBotPin, (GetServoBotAngle() * 180/PI + 90)*2 + mServoBotOffset );*/
 
+
+  mHCPCA9685->Servo(mServoTopPin, (GetServoTopAngle() * 180/PI + 90)*2 + mServoTopOffset );
+  
+  if(leg==LEG_FRONT_LEFT || leg==LEG_BACK_RIGHT)
+  {
+    mHCPCA9685->Servo(mServoMidPin, -((GetServoMidAngle() * 180/PI + 90)*2 - 180) + 180 + mServoMidOffset);
+    mHCPCA9685->Servo(mServoBotPin, -((GetServoBotAngle() * 180/PI + 90)*2 - 180) + 180 + mServoBotOffset);
+  }
+  else if(leg==LEG_FRONT_RIGHT || leg==LEG_BACK_LEFT)
+  {
+    mHCPCA9685->Servo(mServoMidPin, (GetServoMidAngle() * 180/PI + 90)*2 + mServoMidOffset );
+    mHCPCA9685->Servo(mServoBotPin, (GetServoBotAngle() * 180/PI + 90)*2 + mServoBotOffset );
+  }
   /*
   mServoTop->write( GetServoTopAngle() * 180/PI + 90 + mServoTopOffset);
   mServoMid->write( GetServoMidAngle() * 180/PI + 90 + mServoMidOffset);
