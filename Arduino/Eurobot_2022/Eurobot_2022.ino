@@ -1,16 +1,16 @@
 #include <Wire.h>
 #include "Robot.h"
 #include "HCPCA9685.h"
-//#include <LiquidCrystal.h>
-//#include "Ohmmeter.h"
+#include <LiquidCrystal.h>
+#include "Ohmmeter.h"
 #include "Nunchuk.h"
 
 #define  I2CAdd 0x40
 
 HCPCA9685 *hcpca9685;
 Robot *robot;
-//LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-//Ohmmeter ohmmeter(9800.0, A0);
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+Ohmmeter ohmmeter(9800.0, A0);
 
 uint16_t servo_pulse_duration;
 
@@ -30,9 +30,9 @@ void setup()
   Serial.println("SETUP");
   hcpca9685 = new HCPCA9685(I2CAdd);
   hcpca9685->Init(SERVO_MODE);
-  //hcpca9685->SetPeriodFreq(50);
+  hcpca9685->SetPeriodFreq(50);
   hcpca9685->Sleep(false);
-  //lcd.begin(16, 2);
+  lcd.begin(16, 2);
   Wire.begin();
   nunchuk_init();
   robot = new Robot(hcpca9685);
@@ -40,7 +40,7 @@ void setup()
 
 void loop() 
 {
-  Serial.println("loop");
+  Serial.print("loop");
   int c = 1;
   
   if (nunchuk_read())
@@ -55,17 +55,15 @@ void loop()
     }
     else if(JoystickForward())
     {
-      //Serial.println("Forward");
-      //robot->walkForward();
+      robot->walkForward();
     }
     else if(JoystickRearward())
     {
-      //Serial.println("Rearward");
       //robot->walkRearward();
     }
     else if(JoystickLeftSide())
     {
-      //robot->rotateLeftSide();
+      robot->rotateLeftSide();
     }
     else if(JoystickRightSide())
     {
@@ -101,13 +99,6 @@ void Print_Joystick_Value(int16_t X, int16_t Y)
   TCNT2=243;
 */
 
-/*
-float ValueToCoordinate(float value)
-{
-  float value_Max = 90.0;
-  float coordinate_Max = 90.0;
-  return (value/value_Max * coordinate_Max);
-}*/
 /*
 //0.5Hz
 ISR(TIMER1_OVF_vect)
@@ -153,26 +144,7 @@ void Clear_LCDScreen()
   {
     
   }*/
-  //robot->CalibrateAllLegs();
-  //robot->MoveOneLegToCoordinate(80, 0, 150, 1);
-/*
-  robot->MoveOneLegToCoordinatePolar(100, PI/4, 150, 0);
-  robot->MoveOneLegToCoordinatePolar(100, PI/4, 150, 1);
-  robot->MoveOneLegToCoordinatePolar(100, PI/4, 150, 1);
-  delay(1000);
-  robot->MoveOneLegToCoordinatePolar(100, -PI/4, 150, 0);
-  robot->MoveOneLegToCoordinatePolar(100, -PI/4, 150, 1);
-  robot->MoveOneLegToCoordinatePolar(100, -PI/4, 150, 1);
-  delay(1000);*/
-  /*
-  robot->MoveOneLegToCoordinate(-70, -70, 150, 0);
-  robot->MoveOneLegToCoordinate(-70, -70, 150, 1);
-  robot->MoveOneLegToCoordinate(-70, -70, 150, 2);
-  delay(1000);
-  robot->MoveOneLegToCoordinate(70, 70, 150, 0);
-  robot->MoveOneLegToCoordinate(70, 70, 150, 1);
-  robot->MoveOneLegToCoordinate(70, 70, 150, 2);
-  delay(1000);*/
+
   /*
   else if (nunchuk_read())
   {
@@ -196,5 +168,3 @@ void Clear_LCDScreen()
       //coordinate_Calculator.SetCoordinatePolarTarget(100.0, PI/2.0, 150.0);
     }
   }*/
-  //robot->marche();
-  //delay(1000);
