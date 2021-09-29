@@ -63,7 +63,7 @@ void loop()
     }
     else if(JoystickLeftSide())
     {
-      robot->rotateLeftSide();
+      //robot->rotateLeftSide();
     }
     else if(JoystickRightSide())
     {

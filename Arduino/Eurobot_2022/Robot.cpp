@@ -14,8 +14,8 @@ Robot::Robot(HCPCA9685 *hcpca9685)
   // Create leg (pinTop, pinMid, pinBot, offsetTop, offsetMid, offsetBot, hcpca9685)
   legFrontLeft  = new Leg(0, 1, 2, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET, hcpca9685);
   legFrontRight = new Leg(4, 5, 6, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET, hcpca9685);
-  legBackLeft   = new Leg(NEUTRAL_PIN, NEUTRAL_PIN, NEUTRAL_PIN, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET, hcpca9685);
-  legBackRight  = new Leg(NEUTRAL_PIN, NEUTRAL_PIN, NEUTRAL_PIN, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET, hcpca9685);
+  legBackLeft   = new Leg(8, 9, 10, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET, hcpca9685);
+  legBackRight  = new Leg(12, 13, 14, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET, hcpca9685);
 
   mLastMillis = millis();
 
