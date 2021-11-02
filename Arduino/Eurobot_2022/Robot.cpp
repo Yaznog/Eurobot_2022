@@ -5,17 +5,17 @@
 
 //#define DEBUG
 
-Robot::Robot(HCPCA9685 *hcpca9685)
+Robot::Robot(Adafruit_PWMServoDriver* pwm)
 {
   #ifdef DEBUG 
     Serial.println("New Robot"); 
   #endif
   
   // Create leg (pinTop, pinMid, pinBot, offsetTop, offsetMid, offsetBot, hcpca9685)
-  legFrontLeft  = new Leg(0, 1, 2, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET, hcpca9685);
-  legFrontRight = new Leg(4, 5, 6, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET, hcpca9685);
-  legBackLeft   = new Leg(8, 9, 10, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET, hcpca9685);
-  legBackRight  = new Leg(12, 13, 14, NEUTRAL_OFFSET, NEUTRAL_OFFSET,  NEUTRAL_OFFSET, hcpca9685);
+  legFrontLeft  = new Leg(0, 1, 2, 10, 8,  13, pwm);
+  legFrontRight = new Leg(4, 5, 6, 5, 10,  5, pwm);
+  legBackLeft   = new Leg(NEUTRAL_PIN, NEUTRAL_PIN, NEUTRAL_PIN/*8, 9, 10*/, 15, NEUTRAL_OFFSET,  NEUTRAL_OFFSET, pwm);
+  legBackRight  = new Leg(NEUTRAL_PIN, NEUTRAL_PIN, NEUTRAL_PIN/*12, 13, 14*/, -3, -15,  5, pwm);
 
   mLastMillis = millis();
 

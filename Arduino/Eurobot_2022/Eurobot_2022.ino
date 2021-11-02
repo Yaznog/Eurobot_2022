@@ -1,18 +1,19 @@
 #include <Wire.h>
 #include "Robot.h"
-#include "HCPCA9685.h"
+#include "Adafruit_PWMServoDriver.h"
 #include <LiquidCrystal.h>
 #include "Ohmmeter.h"
 #include "Nunchuk.h"
 
-#define  I2CAdd 0x40
+// PCA9685
+Adafruit_PWMServoDriver* pwm = new Adafruit_PWMServoDriver();
 
-HCPCA9685 *hcpca9685;
+uint8_t servonum = 0;
+
+
 Robot *robot;
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 Ohmmeter ohmmeter(9800.0, A0);
-
-uint16_t servo_pulse_duration;
 
 boolean jack;
 int8_t jack_Pin = 2;
@@ -28,37 +29,50 @@ void setup()
   pinMode(jack_Pin, INPUT);
   Serial.begin(9600);
   Serial.println("SETUP");
-  hcpca9685 = new HCPCA9685(I2CAdd);
-  hcpca9685->Init(SERVO_MODE);
-  hcpca9685->SetPeriodFreq(50);
-  hcpca9685->Sleep(false);
+  
+  // PCA9685
+  pwm->begin();
+  pwm->setOscillatorFrequency(27000000);
+  pwm->setPWMFreq(SERVO_FREQ);
+  
   lcd.begin(16, 2);
   Wire.begin();
   nunchuk_init();
-  robot = new Robot(hcpca9685);
+  robot = new Robot(pwm);
 }
 
 void loop() 
 {
   Serial.print("loop");
   int c = 1;
+  //robot->CalibrateAllLegs();
   
   if (nunchuk_read())
   {
     if(nunchuk_buttonC())
     {
+      Serial.println("Button C");
+      //pwm->setPWM(servonum, 0, map(45, 0, 180, SERVOMIN, SERVOMAX));
       robot->CalibrateAllLegs();
     }
     else if(nunchuk_buttonZ())
     {
+      Serial.println("Button Z");
+      //pwm->setPWM(servonum, 0, map(90, 0, 180, SERVOMIN, SERVOMAX));
       robot->raiseAllLegs();
     }
     else if(JoystickForward())
     {
+      Serial.println("Button Forward");
+      //pwm.setPWM(servonum, 0, map(180, 0, 180, SERVOMIN, SERVOMAX));
       robot->walkForward();
     }
     else if(JoystickRearward())
     {
+      for(int i=0; i<100; i++)
+      {
+        robot->MoveOneLegToCoordinatePolar(100, PI/4, 100, 0);
+      }
       //robot->walkRearward();
     }
     else if(JoystickLeftSide())
@@ -73,6 +87,12 @@ void loop()
 }
 
 // Archive --------------------------------------------
+
+/*
+ * pwm->setPWM(mServoTopPin, 0, map(GetServoTopAngle(), 0, 180, SERVOMIN, SERVOMAX));
+  pwm->setPWM(mServoMidPin, 0, map(GetServoMidAngle(), 0, 180, SERVOMIN, SERVOMAX));
+  pwm->setPWM(mServoBotPin, 0, map(GetServoBotAngle(), 0, 180, SERVOMIN, SERVOMAX));
+ */
 
 /*
 void Print_Joystick_Value(int16_t X, int16_t Y)

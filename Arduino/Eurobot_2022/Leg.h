@@ -2,19 +2,24 @@
 #define LEG_H
 
 #include <Arduino.h>
-//#include <Servo.h>
-#include "HCPCA9685.h"
+#include "Adafruit_PWMServoDriver.h"
 
 #define LEG_FRONT_LEFT 0
 #define LEG_FRONT_RIGHT 1
 #define LEG_BACK_LEFT 2
 #define LEG_BACK_RIGHT 3
 
+#define SERVOMIN  90 // This is the 'minimum' pulse length count (out of 4096)
+#define SERVOMAX  460 // This is the 'maximum' pulse length count (out of 4096)
+#define USMIN  600 // This is the rounded 'minimum' microsecond length based on the minimum pulse of 150
+#define USMAX  2400 // This is the rounded 'maximum' microsecond length based on the maximum pulse of 600
+#define SERVO_FREQ 50
+
 class Leg
 {
   public:
   
-    Leg(int8_t servoTopPin, int8_t servoMidPin, int8_t servoBotPin, int16_t servoTopOffset, int16_t servoMidOffset, int16_t servoBotOffset, HCPCA9685 *hcpca9685);
+    Leg(int8_t servoTopPin, int8_t servoMidPin, int8_t servoBotPin, int16_t servoTopOffset, int16_t servoMidOffset, int16_t servoBotOffset, Adafruit_PWMServoDriver* pwm);
     ~Leg();
     
     void SetServoOffset(int16_t servoTopOffset, int16_t servoMidOffset, int16_t servoBotOffset);
@@ -34,12 +39,8 @@ class Leg
     void marche(int leg);
     
   private:
-    /*
-    Servo *mServoTop;
-    Servo *mServoMid;
-    Servo *mServoBot;*/
 
-    HCPCA9685 *mHCPCA9685;
+    Adafruit_PWMServoDriver* mPwm;
     
     int8_t mServoTopPin;
     int8_t mServoMidPin;
