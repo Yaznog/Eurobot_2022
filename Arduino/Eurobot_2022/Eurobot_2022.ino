@@ -4,13 +4,10 @@
 #include <LiquidCrystal.h>
 #include "Ohmmeter.h"
 #include "Nunchuk.h"
+#include "Music.h"
 
-// PCA9685
 Adafruit_PWMServoDriver* pwm = new Adafruit_PWMServoDriver();
-
-uint8_t servonum = 0;
-
-
+Music* music = new Music();
 Robot *robot;
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 Ohmmeter ohmmeter(9800.0, A0);
@@ -52,26 +49,28 @@ void loop()
     if(nunchuk_buttonC())
     {
       Serial.println("Button C");
+      if(music->musicPlayed_flag == false) music->badApple();
       //pwm->setPWM(servonum, 0, map(45, 0, 180, SERVOMIN, SERVOMAX));
       robot->CalibrateAllLegs();
     }
     else if(nunchuk_buttonZ())
     {
       Serial.println("Button Z");
+      if(music->musicPlayed_flag == false) music->crazyFrog();
       //pwm->setPWM(servonum, 0, map(90, 0, 180, SERVOMIN, SERVOMAX));
-      robot->raiseAllLegs();
+      //robot->raiseAllLegs();
     }
     else if(JoystickForward())
     {
       Serial.println("Button Forward");
       //pwm.setPWM(servonum, 0, map(180, 0, 180, SERVOMIN, SERVOMAX));
-      robot->walkForward();
+      //robot->walkForward();
     }
     else if(JoystickRearward())
     {
       for(int i=0; i<100; i++)
       {
-        robot->MoveOneLegToCoordinatePolar(100, PI/4, 100, 0);
+        //robot->MoveOneLegToCoordinatePolar(100, PI/4, 100, 0);
       }
       //robot->walkRearward();
     }

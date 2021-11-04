@@ -56,10 +56,10 @@ class Robot
     const Coordinate mMovementStep2{120,0,120,0,0};// Avant bas
     const Coordinate mMovementStep3{85,35,120,0,0};// Millieu bas*/
     
-    const Coordinate mMovementStep0{40+6.5,80+6.5,120,0,0};// Arrière bas
+    const Coordinate mMovementStep0{40+6.5,80+6.5,150,0,0};// Arrière bas
     const Coordinate mMovementStep1{125,45,80,0,0};// Millieu haut
-    const Coordinate mMovementStep2{160+6.5,-40+6.5,120,0,0};// Avant bas
-    const Coordinate mMovementStep3{125,45,120,0,0};// Millieu bas
+    const Coordinate mMovementStep2{160+6.5,-40+6.5,150,0,0};// Avant bas
+    const Coordinate mMovementStep3{125,45,150,0,0};// Millieu bas
 
     const Coordinate mMovementPolarStop{0,0,120,90,0};// Millieu bas
 
