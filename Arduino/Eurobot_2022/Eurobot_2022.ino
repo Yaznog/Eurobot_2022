@@ -7,11 +7,12 @@
 #include "Music.h"
 
 Adafruit_PWMServoDriver* pwm = new Adafruit_PWMServoDriver();
-Music* music = new Music();
+Music *music = new Music();
 Robot *robot;
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 Ohmmeter ohmmeter(9800.0, A0);
 
+bool start_flag = false;
 boolean jack;
 int8_t jack_Pin = 2;
 
@@ -29,8 +30,10 @@ void setup()
   
   // PCA9685
   pwm->begin();
-  pwm->setOscillatorFrequency(27000000);
+  pwm->setOscillatorFrequency(27000000); 
   pwm->setPWMFreq(SERVO_FREQ);
+
+  music->useBuzzer(0);
   
   lcd.begin(16, 2);
   Wire.begin();
@@ -41,7 +44,12 @@ void setup()
 void loop() 
 {
   Serial.print("loop");
-  int c = 1;
+  if(!start_flag)
+  {
+    //music->windows();
+    start_flag = true;
+  }
+  
   //robot->CalibrateAllLegs();
   
   if (nunchuk_read())
@@ -49,21 +57,19 @@ void loop()
     if(nunchuk_buttonC())
     {
       Serial.println("Button C");
-      if(music->musicPlayed_flag == false) music->badApple();
-      //pwm->setPWM(servonum, 0, map(45, 0, 180, SERVOMIN, SERVOMAX));
+      //if(music->musicPlayed_flag == false) music->saxGuy();
       robot->CalibrateAllLegs();
     }
     else if(nunchuk_buttonZ())
     {
       Serial.println("Button Z");
-      if(music->musicPlayed_flag == false) music->crazyFrog();
-      //pwm->setPWM(servonum, 0, map(90, 0, 180, SERVOMIN, SERVOMAX));
-      //robot->raiseAllLegs();
+      //if(music->musicPlayed_flag == false) music->crazyFrog();
+      robot->raiseAllLegs();
     }
     else if(JoystickForward())
     {
       Serial.println("Button Forward");
-      //pwm.setPWM(servonum, 0, map(180, 0, 180, SERVOMIN, SERVOMAX));
+      //if(music->musicPlayed_flag == false) music->saxGuy();
       //robot->walkForward();
     }
     else if(JoystickRearward())
@@ -88,27 +94,12 @@ void loop()
 // Archive --------------------------------------------
 
 /*
- * pwm->setPWM(mServoTopPin, 0, map(GetServoTopAngle(), 0, 180, SERVOMIN, SERVOMAX));
-  pwm->setPWM(mServoMidPin, 0, map(GetServoMidAngle(), 0, 180, SERVOMIN, SERVOMAX));
-  pwm->setPWM(mServoBotPin, 0, map(GetServoBotAngle(), 0, 180, SERVOMIN, SERVOMAX));
- */
-
-/*
-void Print_Joystick_Value(int16_t X, int16_t Y)
-{
-  Serial.print("X = ");
-  Serial.print(X);
-  Serial.print("   Y = ");
-  Serial.println(Y);
-}*/
-
-/*
   SREG |= 128;
 
   //0.5Hz
   TCCR1A=0;
   TCCR1B=4;
-  TIMSK1=1;s
+  TIMSK1=1;
   TCNT1=2855;
 
   //10Hz
@@ -152,7 +143,6 @@ void Clear_LCDScreen()
   lcd.print("                ");
 }*/
 
-
   /*
   jack = digitalRead(jack_Pin);
   if(jack)
@@ -162,28 +152,4 @@ void Clear_LCDScreen()
   else 
   {
     
-  }*/
-
-  /*
-  else if (nunchuk_read())
-  {
-    if(nunchuk_accelY_raw()>600)
-    {
-      //robot.CalibrateAllLegs();
-    }
-    else 
-    {
-      nunchuk_X_Value = joystick_DeadZone( nunchuk_joystickX() );
-      nunchuk_Y_Value = joystick_DeadZone
-      ( nunchuk_joystickY() );
-  
-      if(nunchuk_buttonZ()) z_Target = 180.0;
-      else if(nunchuk_buttonC()) z_Target = 100.0;
-      else z_Target = 140.0;
-
-      //robot.MoveOneLegToCoordinate(ValueToCoordinate(nunchuk_X_Value)+90, ValueToCoordinate(nunchuk_Y_Value), z_Target, 1);
-      //coordinate_Calculator.SetCoordinateTarget(ValueToCoordinate(nunchuk_X_Value)+90, ValueToCoordinate(nunchuk_Y_Value), z_Target);
-      //coordinate_Calculator.SetCoordinateTarget(100.0, 100.0, 150.0);
-      //coordinate_Calculator.SetCoordinatePolarTarget(100.0, PI/2.0, 150.0);
-    }
   }*/

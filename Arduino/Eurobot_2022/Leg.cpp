@@ -40,10 +40,7 @@ void Leg::Calibrate_Servo()
 void Leg::raiseLeg(uint8_t leg)
 {
   mPwm->setPWM(mServoTopPin, 0, map(90, 0, 180, SERVOMIN, SERVOMAX)+ mServoTopOffset);
- 
   //mHCPCA9685->Servo(mServoTopPin, 180 + mServoMidOffset);
-  //int16_t highValue = 360;
-  //int16_t lowValue = 0;
   
   if(leg==LEG_FRONT_LEFT || leg==LEG_BACK_RIGHT)
   {
@@ -129,7 +126,6 @@ void Leg::MoveLegToTarget(uint8_t leg)
     mPwm->setPWM(mServoMidPin, 0, map(90 - (GetServoBotAngle() * 180/PI ), 0, 180, SERVOMIN, SERVOMAX)+ mServoMidOffset);
     mPwm->setPWM(mServoBotPin, 0, map(90 - (GetServoBotAngle() * 180/PI ), 0, 180, SERVOMIN, SERVOMAX)+ mServoBotOffset);
     //mPwm->setPWM(mServoBotPin, 0, map(90 - GetServoBotAngle(), 0, 180, SERVOMIN, SERVOMAX)+ mServoBotOffset);
-    //mHCPCA9685->Servo(mServoMidPin
     //mHCPCA9685->Servo(mServoBotPin, -((GetServoBotAngle() * 180/PI + 90)*2 - 180) + 180 + mServoBotOffset);
   }
   else if(leg==LEG_FRONT_RIGHT || leg==LEG_BACK_LEFT)

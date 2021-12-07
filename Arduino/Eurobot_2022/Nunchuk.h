@@ -198,7 +198,7 @@ static float nunchuk_roll()
 
 static int16_t joystick_DeadZone(int16_t value)
 {
-  int16_t deadzone_Min = 5;
+  int16_t deadzone_Min = 10;
   int16_t deadzone_Max = 90;
   
   if( value<deadzone_Min && value>-deadzone_Min ) return 0;
