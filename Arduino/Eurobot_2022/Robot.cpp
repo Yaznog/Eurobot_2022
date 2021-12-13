@@ -12,10 +12,10 @@ Robot::Robot(Adafruit_PWMServoDriver* pwm)
   #endif
   
   // Create leg (pinTop, pinMid, pinBot, offsetTop, offsetMid, offsetBot, hcpca9685)
-  legFrontLeft  = new Leg(4, 5, 6, 10, 8,  13, pwm);
-  legFrontRight = new Leg(0, 1, 2, 5, 10,  5, pwm);
-  legBackLeft   = new Leg(8, 9, 10, 15, NEUTRAL_OFFSET,  NEUTRAL_OFFSET, pwm);
-  legBackRight  = new Leg(12, 13, 14, -3, -15,  5, pwm);
+  legFrontLeft  = new Leg(8, 9, 10, 10, 8,  13, pwm);
+  legFrontRight = new Leg(4, 5, 6, 5, 10,  5, pwm);
+  legBackLeft   = new Leg(12, 13, 14, 15, NEUTRAL_OFFSET,  NEUTRAL_OFFSET, pwm);
+  legBackRight  = new Leg(1, 2, 3, -3, -15,  5, pwm);
 
   mLastMillis = millis();
 

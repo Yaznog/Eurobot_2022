@@ -15,6 +15,7 @@ Ohmmeter ohmmeter(9800.0, A0);
 bool start_flag = false;
 boolean jack;
 int8_t jack_Pin = 2;
+int incomingByte = 0;
 
 float x_Target;
 float y_Target;
@@ -51,7 +52,49 @@ void loop()
   }
   
   //robot->CalibrateAllLegs();
-  
+
+  if(Serial.available())
+  {
+    incomingByte = Serial.read();
+    switch(incomingByte)
+    {
+      case 122://z
+      {
+        Serial.print("z");
+        //robot->walkForward();
+        break;
+      }
+      case 113://q
+      {
+        Serial.print("q");
+        break;
+      }
+      case 115://s
+      {
+        Serial.print("s");
+        break;
+      }
+      case 100://d
+      {
+        Serial.print("d");
+        break;
+      }
+      case 97://a
+      {
+        Serial.print("a");
+        robot->CalibrateAllLegs();
+        break;
+      }
+      case 101://e
+      {
+        Serial.print("e");
+        robot->raiseAllLegs();
+        break;
+      }
+    }
+  }
+
+  /*
   if (nunchuk_read())
   {
     if(nunchuk_buttonC())
@@ -88,7 +131,7 @@ void loop()
     {
       //robot->rotateRightSide();
     }
-  }
+  }*/
 }
 
 // Archive --------------------------------------------
