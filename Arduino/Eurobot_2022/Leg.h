@@ -18,14 +18,14 @@
 class Leg
 {
   public:
-  
+
     Leg(int8_t servoTopPin, int8_t servoMidPin, int8_t servoBotPin, int16_t servoTopOffset, int16_t servoMidOffset, int16_t servoBotOffset, Adafruit_PWMServoDriver* pwm);
     ~Leg();
-    
+
     void SetServoOffset(int16_t servoTopOffset, int16_t servoMidOffset, int16_t servoBotOffset);
     void Calibrate_Servo();
     void raiseLeg(uint8_t leg);
-    
+
     void SetCoordinateTarget(float x, float y, float z);
     void SetCoordinatePolarTarget(float module, float argument, float z);
 
@@ -33,19 +33,19 @@ class Leg
     float GetServoMidAngle();
     float GetServoBotAngle();
     float MaxAngle(float value);
-        
+
     void MoveLegToTarget(uint8_t leg);
 
     void marche(int leg);
-    
+
   private:
 
     Adafruit_PWMServoDriver* mPwm;
-    
+
     int8_t mServoTopPin;
     int8_t mServoMidPin;
     int8_t mServoBotPin;
-  
+
     int16_t mServoTopOffset = 0;
     int16_t mServoMidOffset = 0;
     int16_t mServoBotOffset = 0;

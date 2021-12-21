@@ -1,21 +1,13 @@
 #include <Wire.h>
+#include <SoftwareSerial.h>
 #include "Robot.h"
 #include "Adafruit_PWMServoDriver.h"
-#include <LiquidCrystal.h>
-#include "Ohmmeter.h"
-#include "Nunchuk.h"
 #include "Music.h"
-
-Adafruit_PWMServoDriver* pwm = new Adafruit_PWMServoDriver();
-Music *music = new Music();
-Robot *robot;
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-Ohmmeter ohmmeter(9800.0, A0);
 
 bool start_flag = false;
 boolean jack;
-int8_t jack_Pin = 2;
-int incomingByte = 0;
+//int8_t jack_Pin = -1;
+const uint8_t buzzerPin = 8;
 
 float x_Target;
 float y_Target;
@@ -23,78 +15,101 @@ float z_Target;
 float module_Target;
 float argument_Target;
 
+const uint8_t txPin = 9;
+const uint8_t rxPin = 10;
+char bluetoothData;
+
+const uint16_t servoFreq = 50;
+
+Adafruit_PWMServoDriver* servoDriver = new Adafruit_PWMServoDriver();
+Music* music;
+Robot* robot;
+SoftwareSerial blueSerial(txPin, rxPin);
+
 void setup() 
 {
-  pinMode(jack_Pin, INPUT);
+  //pinMode(jack_Pin, INPUT);
   Serial.begin(9600);
   Serial.println("SETUP");
+  blueSerial.begin(9600);
   
   // PCA9685
-  pwm->begin();
-  pwm->setOscillatorFrequency(27000000); 
-  pwm->setPWMFreq(SERVO_FREQ);
+  servoDriver->begin();
+  servoDriver->setOscillatorFrequency(27000000);
+  servoDriver->setPWMFreq(servoFreq);
 
-  music->useBuzzer(0);
-  
-  lcd.begin(16, 2);
+  music = new Music(buzzerPin);
   Wire.begin();
-  nunchuk_init();
-  robot = new Robot(pwm);
+  robot = new Robot(servoDriver);
 }
 
 void loop() 
-{
+{/*
   Serial.print("loop");
-  if(!start_flag)
+  if (!start_flag) 
   {
     //music->windows();
     start_flag = true;
-  }
-  
+  }*/
+
   //robot->CalibrateAllLegs();
 
-  if(Serial.available())
+  if (blueSerial.available()) 
   {
-    incomingByte = Serial.read();
-    switch(incomingByte)
-    {
-      case 122://z
-      {
-        Serial.print("z");
-        //robot->walkForward();
-        break;
-      }
-      case 113://q
-      {
-        Serial.print("q");
-        break;
-      }
-      case 115://s
-      {
-        Serial.print("s");
-        break;
-      }
-      case 100://d
-      {
-        Serial.print("d");
-        break;
-      }
-      case 97://a
-      {
-        Serial.print("a");
-        robot->CalibrateAllLegs();
-        break;
-      }
-      case 101://e
-      {
-        Serial.print("e");
-        robot->raiseAllLegs();
-        break;
-      }
-    }
+    bluetoothData=blueSerial.read(); 
+    //music->useBuzzer();
+    //tone(buzzerPin, 110, 100);
+    parseCommand(bluetoothData);
   }
+}
 
-  /*
+void parseCommand(char input) 
+{
+  switch (input) {
+    case 'u': // UP
+      Serial.println("UP");
+      break;
+    case 'd': // DOWN
+      Serial.println("DOWN");
+      break;
+    case 'l': // LEFT
+      Serial.println("LEFT");
+      break;
+    case 'r': // RIGHT
+      Serial.println("RIGHT");
+      break; 
+
+    case 'm': // SELECT
+      Serial.println("SELECT");
+      break;
+    case 'M': // START
+      Serial.println("START");
+      break; 
+      
+    case 'S': // SQUARE
+      Serial.println("SQUARE");
+      music->windows();
+      break;
+    case 'T': // TRIANGLE
+      Serial.println("TRIANGLE");
+      music->saxGuy();
+      break;
+    case 'C': // CROSS
+      Serial.println("CROSS");
+      music->badApple();
+      break;
+    case 'R': // ROUND
+      Serial.println("ROUND");
+      music->crazyFrog();
+      break; 
+  }
+}
+
+
+// Archive --------------------------------------------
+
+
+/*
   if (nunchuk_read())
   {
     if(nunchuk_buttonC())
@@ -132,9 +147,9 @@ void loop()
       //robot->rotateRightSide();
     }
   }*/
-}
 
-// Archive --------------------------------------------
+
+
 
 /*
   SREG |= 128;
@@ -186,7 +201,7 @@ void Clear_LCDScreen()
   lcd.print("                ");
 }*/
 
-  /*
+/*
   jack = digitalRead(jack_Pin);
   if(jack)
   {
