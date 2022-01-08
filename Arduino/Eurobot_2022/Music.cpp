@@ -8,7 +8,6 @@ Music::Music(uint8_t buzzerPin)
   Serial.println("New Music");
 #endif
   mBuzzerPin = buzzerPin;
-  //noTone(mBuzzerPin);
 }
 
 Music::~Music()
@@ -20,13 +19,11 @@ Music::~Music()
 
 void Music::useBuzzer()
 {
-  //noTone(mBuzzerPin);
   tone(mBuzzerPin, 110, 100);
 }
 
 void Music::useBuzzer(uint16_t frequency)
 {
-  //noTone(mBuzzerPin);
   tone(mBuzzerPin, frequency, 100);
 }
 
@@ -38,8 +35,6 @@ void Music::windows()
   musicPlayed_flag = true;
   uint8_t line = 0;
   float lastMillis = millis();
-
-  //noTone(mBuzzerPin);
 
   while (musicPlayed_flag)
   {
@@ -55,7 +50,63 @@ void Music::windows()
       if (line >= mLength_Windows)
       {
         musicPlayed_flag = false;
-        //return 0;
+        break;
+      }
+    }
+  }
+}
+
+void Music::windowsConnection()
+{
+#ifdef DEBUG
+  Serial.println("Music Windows_Connection");
+#endif
+  musicPlayed_flag = true;
+  uint8_t line = 0;
+  float lastMillis = millis();
+
+  while (musicPlayed_flag)
+  {
+    if (millis() - mDeltaT_Windows_Connection >= lastMillis)
+    {
+      if (mMusic_Windows_Connection[line][0]) tone(mBuzzerPin, 262, mDeltaT_Windows_Connection - 10);
+      if (mMusic_Windows_Connection[line][1]) tone(mBuzzerPin, 220, mDeltaT_Windows_Connection - 10);
+      if (mMusic_Windows_Connection[line][2]) tone(mBuzzerPin, 175, mDeltaT_Windows_Connection - 10);
+      if (mMusic_Windows_Connection[line][3]) tone(mBuzzerPin, 330, mDeltaT_Windows_Connection - 10);
+
+      lastMillis += mDeltaT_Windows_Connection;
+      line++;
+      if (line >= mLength_Windows_Connection)
+      {
+        musicPlayed_flag = false;
+        break;
+      }
+    }
+  }
+}
+
+void Music::windowsDisconnection()
+{
+#ifdef DEBUG
+  Serial.println("Music Windows_Disconnection");
+#endif
+  musicPlayed_flag = true;
+  uint8_t line = 0;
+  float lastMillis = millis();
+
+  while (musicPlayed_flag)
+  {
+    if (millis() - mDeltaT_Windows_Disconnection >= lastMillis)
+    {
+      if (mMusic_Windows_Disconnection[line][0]) tone(mBuzzerPin, 440, mDeltaT_Windows_Disconnection - 10);
+      if (mMusic_Windows_Disconnection[line][1]) tone(mBuzzerPin, 349, mDeltaT_Windows_Disconnection - 10);
+      if (mMusic_Windows_Disconnection[line][2]) tone(mBuzzerPin, 330, mDeltaT_Windows_Disconnection - 10);
+
+      lastMillis += mDeltaT_Windows_Disconnection;
+      line++;
+      if (line >= mLength_Windows_Disconnection)
+      {
+        musicPlayed_flag = false;
         break;
       }
     }
@@ -71,16 +122,14 @@ void Music::saxGuy()
   uint8_t line = 0;
   float lastMillis = millis();
 
-  //noTone(mBuzzerPin);
-
   while (musicPlayed_flag)
   {
     if (millis() - mDeltaT_SaxGuy >= lastMillis)
     {
-      if (mMusic_SaxGuy[line][0]) tone(mBuzzerPin, 440, mDeltaT_SaxGuy - 10);//622
-      if (mMusic_SaxGuy[line][1]) tone(mBuzzerPin, 392, mDeltaT_SaxGuy - 10);//311
-      if (mMusic_SaxGuy[line][2]) tone(mBuzzerPin, 349, mDeltaT_SaxGuy - 10);//466
-      if (mMusic_SaxGuy[line][3]) tone(mBuzzerPin, 294, mDeltaT_SaxGuy - 10);//415
+      if (mMusic_SaxGuy[line][0]) tone(mBuzzerPin, 440, mDeltaT_SaxGuy - 10);
+      if (mMusic_SaxGuy[line][1]) tone(mBuzzerPin, 392, mDeltaT_SaxGuy - 10);
+      if (mMusic_SaxGuy[line][2]) tone(mBuzzerPin, 349, mDeltaT_SaxGuy - 10);
+      if (mMusic_SaxGuy[line][3]) tone(mBuzzerPin, 294, mDeltaT_SaxGuy - 10);
 
       //----------
 
@@ -92,7 +141,6 @@ void Music::saxGuy()
       if (line >= mLength_SaxGuy)
       {
         musicPlayed_flag = false;
-        //return 0;
         break;
       }
     }
@@ -108,8 +156,6 @@ void Music::badApple()
   uint8_t line = 0;
   float lastMillis = millis();
 
-  //noTone(mBuzzerPin);
-
   while (musicPlayed_flag)
   {
     if (millis() - mDeltaT_BadApple >= lastMillis)
@@ -124,7 +170,6 @@ void Music::badApple()
       if (line >= mLength_BadApple)
       {
         musicPlayed_flag = false;
-        //return 0;
         break;
       }
     }
@@ -139,8 +184,6 @@ void Music::crazyFrog()
   uint8_t line = 0;
   musicPlayed_flag = true;
   float lastMillis = millis();
-
-  //noTone(mBuzzerPin);
 
   while (musicPlayed_flag)
   {
@@ -166,7 +209,6 @@ void Music::crazyFrog()
       if (line >= mLength_CrazyFrog)
       {
         musicPlayed_flag = false;
-        //return 0;
         break;
       }
     }

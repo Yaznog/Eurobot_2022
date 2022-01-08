@@ -29,36 +29,26 @@ Adafruit_PWMServoDriver::Adafruit_PWMServoDriver(const uint8_t addr,
     TwoWire &i2c)
   : _i2caddr(addr), _i2c(&i2c) {}
 
-/*!
-    @brief  Setups the I2C interface and hardware
-    @param  prescale
-            Sets External Clock (Optional)
-*/
 void Adafruit_PWMServoDriver::begin(uint8_t prescale) {
   //------------------------------------------------------------------------------------------------------------------------------------------------------------------
   _i2c->begin();
   reset();
-  if (prescale) {
+  if (prescale) 
+  {
     setExtClk(prescale);
-  } else {
-    // set a default frequency
-    setPWMFreq(1000);
+  } 
+  else 
+  {
+    setPWMFreq(1000);// set a default frequency
   }
-  // set the default internal frequency
-  setOscillatorFrequency(FREQUENCY_OSCILLATOR);
+  setOscillatorFrequency(FREQUENCY_OSCILLATOR);// set the default internal frequency
 }
 
-/*!
-    @brief  Sends a reset command to the PCA9685 chip over I2C
-*/
 void Adafruit_PWMServoDriver::reset() {
   write8(PCA9685_MODE1, MODE1_RESTART);
   delay(10);
 }
 
-/*!
-    @brief  Puts board into sleep mode
-*/
 void Adafruit_PWMServoDriver::sleep() {
   uint8_t awake = read8(PCA9685_MODE1);
   uint8_t sleep = awake | MODE1_SLEEP; // set sleep bit high
@@ -66,9 +56,6 @@ void Adafruit_PWMServoDriver::sleep() {
   delay(5); // wait until cycle ends for sleep to be active
 }
 
-/*!
-    @brief  Wakes board from sleep
-*/
 void Adafruit_PWMServoDriver::wakeup() {
   uint8_t sleep = read8(PCA9685_MODE1);
   uint8_t wakeup = sleep & ~MODE1_SLEEP; // set sleep bit low

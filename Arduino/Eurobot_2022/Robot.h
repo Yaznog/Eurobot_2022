@@ -23,7 +23,7 @@ class Robot
 {
   public:
 
-    Robot(Adafruit_PWMServoDriver* pwm);
+    Robot(Adafruit_PWMServoDriver* servoDriver);
     ~Robot();
 
     void MoveOneLegToCoordinate(float x, float y, float z, uint8_t leg);
@@ -56,35 +56,17 @@ class Robot
         const Coordinate mMovementStep2{120,0,120,0,0};// Avant bas
         const Coordinate mMovementStep3{85,35,120,0,0};// Millieu bas*/
 
-    const Coordinate mMovementStep0 {
-      40 + 6.5, 80 + 6.5, 150, 0, 0
-    };// Arrière bas
-    const Coordinate mMovementStep1 {
-      125, 45, 80, 0, 0
-    };// Millieu haut
-    const Coordinate mMovementStep2 {
-      160 + 6.5, -40 + 6.5, 150, 0, 0
-    };// Avant bas
-    const Coordinate mMovementStep3 {
-      125, 45, 150, 0, 0
-    };// Millieu bas
+    const Coordinate mMovementStep0 { 40 + 6.5, 80 + 6.5, 150, 0, 0 };// Arrière bas
+    const Coordinate mMovementStep1 { 125, 45, 80, 0, 0 };// Millieu haut
+    const Coordinate mMovementStep2 { 160 + 6.5, -40 + 6.5, 150, 0, 0 };// Avant bas
+    const Coordinate mMovementStep3 { 125, 45, 150, 0, 0 };// Millieu bas
 
-    const Coordinate mMovementPolarStop {
-      0, 0, 120, 90, 0
-    };// Millieu bas
+    const Coordinate mMovementPolarStop { 0, 0, 120, 90, 0 };// Millieu bas
 
-    const Coordinate mMovementPolarStep0 {
-      0, 0, 120, 90, -PI / 4
-    };// Arrière bas
-    const Coordinate mMovementPolarStep1 {
-      0, 0, 80, 90, 0
-    };// Millieu haut
-    const Coordinate mMovementPolarStep2 {
-      0, 0, 120, 90, PI / 4
-    };// Avant bas
-    const Coordinate mMovementPolarStep3 {
-      0, 0, 120, 90, 0
-    };// Millieu bas
+    const Coordinate mMovementPolarStep0 { 0, 0, 120, 90, -PI / 4 };// Arrière bas
+    const Coordinate mMovementPolarStep1 { 0, 0, 80, 90, 0 };// Millieu haut
+    const Coordinate mMovementPolarStep2 { 0, 0, 120, 90, PI / 4 };// Avant bas
+    const Coordinate mMovementPolarStep3 { 0, 0, 120, 90, 0 };// Millieu bas
 
     const int mDeltaT = 800;// Time between 2 movements in milliseconds
     float mLastMillis;

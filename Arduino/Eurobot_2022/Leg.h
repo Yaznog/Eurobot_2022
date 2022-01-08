@@ -15,11 +15,14 @@
 #define USMAX  2400 // This is the rounded 'maximum' microsecond length based on the maximum pulse of 600
 #define SERVO_FREQ 50
 
+#define INIT 90
+#define ROTATION 45
+
 class Leg
 {
   public:
 
-    Leg(int8_t servoTopPin, int8_t servoMidPin, int8_t servoBotPin, int16_t servoTopOffset, int16_t servoMidOffset, int16_t servoBotOffset, Adafruit_PWMServoDriver* pwm);
+    Leg(int8_t servoTopPin, int8_t servoMidPin, int8_t servoBotPin, int16_t servoTopOffset, int16_t servoMidOffset, int16_t servoBotOffset, Adafruit_PWMServoDriver* servoDriver);
     ~Leg();
 
     void SetServoOffset(int16_t servoTopOffset, int16_t servoMidOffset, int16_t servoBotOffset);
@@ -40,7 +43,7 @@ class Leg
 
   private:
 
-    Adafruit_PWMServoDriver* mPwm;
+    Adafruit_PWMServoDriver* mServoDriver;
 
     int8_t mServoTopPin;
     int8_t mServoMidPin;
@@ -65,8 +68,6 @@ class Leg
     float mArgumentCoordinate;
 
     int mEtatMarche = 0;
-    const int INIT = 90;
-    const int ROTATION = 45;
 };
 
 #endif

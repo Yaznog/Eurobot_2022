@@ -9,6 +9,8 @@ class Music {
     ~Music();
 
     void windows();
+    void windowsConnection();
+    void windowsDisconnection();
     void saxGuy();
     void badApple();
     void crazyFrog();
@@ -39,6 +41,27 @@ class Music {
       {1, 0, 0, 0},
       {0, 0, 0, 0},
 
+      {0, 0, 1, 0}
+    };
+
+    const uint8_t mDeltaT_Windows_Connection = 120;
+    const uint8_t mLength_Windows_Connection = 6;
+    const bool mMusic_Windows_Connection[6][4] = {
+      //C4 A3 F3 E4
+      {1, 0, 0, 0},
+      {0, 0, 0, 0},
+      {0, 1, 0, 0},
+      {0, 0, 1, 0},
+
+      {0, 0, 0, 1}
+    };
+
+    const uint8_t mDeltaT_Windows_Disconnection = 120;
+    const uint8_t mLength_Windows_Disconnection = 4;
+    const bool mMusic_Windows_Disconnection[4][4] = {
+      //A4 F4 E4 00
+      {1, 0, 0, 0},
+      {0, 1, 0, 0},
       {0, 0, 1, 0}
     };
 

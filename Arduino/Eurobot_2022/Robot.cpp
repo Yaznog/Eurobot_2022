@@ -2,24 +2,26 @@
 #define NEUTRAL_PIN -1
 #define NEUTRAL_OFFSET 0
 
-#define DEBUG
+//#define DEBUG
 
-Robot::Robot(Adafruit_PWMServoDriver* pwm)
+Robot::Robot(Adafruit_PWMServoDriver* servoDriver)
 {
+  
 #ifdef DEBUG
   Serial.println("New Robot");
 #endif
 
   // Create leg (pinTop, pinMid, pinBot, offsetTop, offsetMid, offsetBot, hcpca9685)
-  legFrontLeft  = new Leg(8, 9, 10, 10, 8,  13, pwm);
-  legFrontRight = new Leg(4, 5, 6, 5, 10,  5, pwm);
-  legBackLeft   = new Leg(12, 13, 14, 15, NEUTRAL_OFFSET,  NEUTRAL_OFFSET, pwm);
-  legBackRight  = new Leg(1, 2, 3, -3, -15,  5, pwm);
+  legFrontLeft  = new Leg(8, 9, 10, 10, 8,  13, servoDriver);
+  legFrontRight = new Leg(4, 5, 6, 5, 10,  5, servoDriver);
+  legBackLeft   = new Leg(12, 13, 14, 15, NEUTRAL_OFFSET,  NEUTRAL_OFFSET, servoDriver);
+  legBackRight  = new Leg(1, 2, 3, -3, -15,  5, servoDriver);
 
   mLastMillis = millis();
 
   //CalibrateAllLegs();
-  raiseAllLegs();/*
+  //raiseAllLegs();
+  /*
   for(int i=0;i<4;i++)
   {
     mStartingStep[i] = 0;

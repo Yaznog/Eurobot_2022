@@ -1,10 +1,13 @@
 #include "Leg.h"
 #include <Math.h>
 
-Leg::Leg(int8_t servoTopPin, int8_t servoMidPin, int8_t servoBotPin, int16_t servoTopOffset, int16_t servoMidOffset, int16_t servoBotOffset, Adafruit_PWMServoDriver* pwm) {
-  Serial.println("new Leg");
+Leg::Leg( int8_t servoTopPin,     int8_t servoMidPin,     int8_t servoBotPin, 
+          int16_t servoTopOffset, int16_t servoMidOffset, int16_t servoBotOffset, 
+          Adafruit_PWMServoDriver* servoDriver) {
+          
+  //Serial.println("new Leg");
 
-  mPwm = pwm;
+  mServoDriver = servoDriver;
 
   mServoTopPin = servoTopPin;
   mServoMidPin = servoMidPin;
@@ -29,23 +32,25 @@ void Leg::SetServoOffset(int16_t servoTopOffset, int16_t servoMidOffset, int16_t
 
 void Leg::Calibrate_Servo() {
   //Serial.println("Calibrate_Servo");
-  mPwm->setPWM(mServoTopPin, 0, map(90, 0, 180, SERVOMIN, SERVOMAX) + mServoTopOffset);
-  mPwm->setPWM(mServoMidPin, 0, map(90, 0, 180, SERVOMIN, SERVOMAX) + mServoMidOffset);
-  mPwm->setPWM(mServoBotPin, 0, map(90, 0, 180, SERVOMIN, SERVOMAX) + mServoBotOffset);
+  
+  mServoDriver->setPWM(mServoTopPin, 0, map(90, 0, 180, SERVOMIN, SERVOMAX) + mServoTopOffset);
+  mServoDriver->setPWM(mServoMidPin, 0, map(90, 0, 180, SERVOMIN, SERVOMAX) + mServoMidOffset);
+  mServoDriver->setPWM(mServoBotPin, 0, map(90, 0, 180, SERVOMIN, SERVOMAX) + mServoBotOffset);
 }
 
 void Leg::raiseLeg(uint8_t leg) {
-  mPwm->setPWM(mServoTopPin, 0, map(90, 0, 180, SERVOMIN, SERVOMAX) + mServoTopOffset);
+  mServoDriver->setPWM(mServoTopPin, 0, map(90, 0, 180, SERVOMIN, SERVOMAX) + mServoTopOffset);
   //mHCPCA9685->Servo(mServoTopPin, 180 + mServoMidOffset);
 
   if (leg == LEG_FRONT_LEFT || leg == LEG_BACK_RIGHT) {
-    mPwm->setPWM(mServoMidPin, 0, map(180, 0, 180, SERVOMIN, SERVOMAX) + mServoMidOffset);
-    mPwm->setPWM(mServoBotPin, 0, map(0, 0, 180, SERVOMIN, SERVOMAX) + mServoBotOffset);
+    mServoDriver->setPWM(mServoMidPin, 0, map(180, 0, 180, SERVOMIN, SERVOMAX) + mServoMidOffset);
+    mServoDriver->setPWM(mServoBotPin, 0, map(0, 0, 180, SERVOMIN, SERVOMAX) + mServoBotOffset);
     //mHCPCA9685->Servo(mServoMidPin, -(lowValue - 180) + 180 + mServoMidOffset);
     //mHCPCA9685->Servo(mServoBotPin, -(highValue - 180) + 180 + mServoBotOffset);
-  } else if (leg == LEG_FRONT_RIGHT || leg == LEG_BACK_LEFT) {
-    mPwm->setPWM(mServoMidPin, 0, map(0, 0, 180, SERVOMIN, SERVOMAX) + mServoMidOffset);
-    mPwm->setPWM(mServoBotPin, 0, map(180, 0, 180, SERVOMIN, SERVOMAX) + mServoBotOffset);
+  } 
+  else if (leg == LEG_FRONT_RIGHT || leg == LEG_BACK_LEFT) {
+    mServoDriver->setPWM(mServoMidPin, 0, map(0, 0, 180, SERVOMIN, SERVOMAX) + mServoMidOffset);
+    mServoDriver->setPWM(mServoBotPin, 0, map(180, 0, 180, SERVOMIN, SERVOMAX) + mServoBotOffset);
     //mHCPCA9685->Servo(mServoMidPin, lowValue + mServoMidOffset);
     //mHCPCA9685->Servo(mServoBotPin, highValue + mServoBotOffset);
   }
@@ -97,9 +102,9 @@ float Leg::MaxAngle(float value) {
 // Movement Function----------------------------------------
 
 void Leg::MoveLegToTarget(uint8_t leg) {
-  mPwm->setPWM(mServoTopPin, 0, map((GetServoTopAngle() * 180 / PI + 90), 0, 180, SERVOMIN, SERVOMAX) + mServoTopOffset);
-  Serial.println(GetServoTopAngle());
-  Serial.println(map(GetServoTopAngle() + 90, 0, 180, SERVOMIN, SERVOMAX));
+  mServoDriver->setPWM(mServoTopPin, 0, map((GetServoTopAngle() * 180 / PI + 90), 0, 180, SERVOMIN, SERVOMAX) + mServoTopOffset);
+  //Serial.println(GetServoTopAngle());
+  //Serial.println(map(GetServoTopAngle() + 90, 0, 180, SERVOMIN, SERVOMAX));
   /*
     mHCPCA9685->Servo(mServoTopPin, (GetServoTopAngle() * 180/PI + 90)*2 + mServoTopOffset );
     mHCPCA9685->Servo(mServoMidPin, (GetServoMidAngle() * 180/PI + 90)*2 + mServoMidOffset );
@@ -108,13 +113,14 @@ void Leg::MoveLegToTarget(uint8_t leg) {
   //mHCPCA9685->Servo(mServoTopPin, (GetServoTopAngle() * 180/PI + 90)*2 + mServoTopOffset );
 
   if (leg == LEG_FRONT_LEFT || leg == LEG_BACK_RIGHT) {
-    mPwm->setPWM(mServoMidPin, 0, map(90 - (GetServoBotAngle() * 180 / PI), 0, 180, SERVOMIN, SERVOMAX) + mServoMidOffset);
-    mPwm->setPWM(mServoBotPin, 0, map(90 - (GetServoBotAngle() * 180 / PI), 0, 180, SERVOMIN, SERVOMAX) + mServoBotOffset);
-    //mPwm->setPWM(mServoBotPin, 0, map(90 - GetServoBotAngle(), 0, 180, SERVOMIN, SERVOMAX)+ mServoBotOffset);
+    mServoDriver->setPWM(mServoMidPin, 0, map(90 - (GetServoBotAngle() * 180 / PI), 0, 180, SERVOMIN, SERVOMAX) + mServoMidOffset);
+    mServoDriver->setPWM(mServoBotPin, 0, map(90 - (GetServoBotAngle() * 180 / PI), 0, 180, SERVOMIN, SERVOMAX) + mServoBotOffset);
+    //mServoDriver->setPWM(mServoBotPin, 0, map(90 - GetServoBotAngle(), 0, 180, SERVOMIN, SERVOMAX)+ mServoBotOffset);
     //mHCPCA9685->Servo(mServoBotPin, -((GetServoBotAngle() * 180/PI + 90)*2 - 180) + 180 + mServoBotOffset);
-  } else if (leg == LEG_FRONT_RIGHT || leg == LEG_BACK_LEFT) {
-    mPwm->setPWM(mServoMidPin, 0, map((GetServoBotAngle() * 180 / PI) + 90, 0, 180, SERVOMIN, SERVOMAX) + mServoMidOffset);
-    mPwm->setPWM(mServoBotPin, 0, map((GetServoBotAngle() * 180 / PI) + 90, 0, 180, SERVOMIN, SERVOMAX) + mServoBotOffset);
+  } 
+  else if (leg == LEG_FRONT_RIGHT || leg == LEG_BACK_LEFT) {
+    mServoDriver->setPWM(mServoMidPin, 0, map((GetServoBotAngle() * 180 / PI) + 90, 0, 180, SERVOMIN, SERVOMAX) + mServoMidOffset);
+    mServoDriver->setPWM(mServoBotPin, 0, map((GetServoBotAngle() * 180 / PI) + 90, 0, 180, SERVOMIN, SERVOMAX) + mServoBotOffset);
     //mHCPCA9685->Servo(mServoMidPin, (GetServoMidAngle() * 180/PI + 90)*2 + mServoMidOffset );
     //mHCPCA9685->Servo(mServoBotPin, (GetServoBotAngle() * 180/PI + 90)*2 + mServoBotOffset );
   }

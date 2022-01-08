@@ -1,0 +1,105 @@
+// Archive --------------------------------------------
+
+
+/*
+  if (nunchuk_read())
+  {
+    if(nunchuk_buttonC())
+    {
+      Serial.println("Button C");
+      //if(music->musicPlayed_flag == false) music->saxGuy();
+      robot->CalibrateAllLegs();
+    }
+    else if(nunchuk_buttonZ())
+    {
+      Serial.println("Button Z");
+      //if(music->musicPlayed_flag == false) music->crazyFrog();
+      robot->raiseAllLegs();
+    }
+    else if(JoystickForward())
+    {
+      Serial.println("Button Forward");
+      //if(music->musicPlayed_flag == false) music->saxGuy();
+      //robot->walkForward();
+    }
+    else if(JoystickRearward())
+    {
+      for(int i=0; i<100; i++)
+      {
+        //robot->MoveOneLegToCoordinatePolar(100, PI/4, 100, 0);
+      }
+      //robot->walkRearward();
+    }
+    else if(JoystickLeftSide())
+    {
+      //robot->rotateLeftSide();
+    }
+    else if(JoystickRightSide())
+    {
+      //robot->rotateRightSide();
+    }
+  }*/
+
+
+
+
+/*
+  SREG |= 128;
+
+  //0.5Hz
+  TCCR1A=0;
+  TCCR1B=4;
+  TIMSK1=1;
+  TCNT1=2855;
+
+  //10Hz
+  TCCR2A=0;
+  TCCR2B=7;
+  TIMSK2=1;
+  TCNT2=243;
+*/
+
+/*
+//0.5Hz
+ISR(TIMER1_OVF_vect)
+{
+  TCNT1=2855;
+  Print_LCDScreen_OhmmeterValue();
+}
+
+//10Hz
+ISR(TIMER2_OVF_vect)
+{
+  TCNT2=243;
+}*/
+
+/*
+void Print_LCDScreen_OhmmeterValue()
+{
+  Clear_LCDScreen();
+  lcd.setCursor(0, 0);
+  lcd.print("Ohmmeter:"); 
+  lcd.setCursor(0, 1);
+  lcd.print(ohmmeter.GetUnknownResistorValue());
+  lcd.setCursor(8, 1);
+  lcd.print( ohmmeter.GetNormalizedValue(ohmmeter.GetUnknownResistorValue()) );
+}
+
+void Clear_LCDScreen()
+{
+  lcd.setCursor(0, 0);
+  lcd.print("                ");
+  lcd.setCursor(0, 1);
+  lcd.print("                ");
+}*/
+
+/*
+  jack = digitalRead(JACK_PIN);
+  if(jack)
+  {
+    
+  }
+  else 
+  {
+    
+  }*/

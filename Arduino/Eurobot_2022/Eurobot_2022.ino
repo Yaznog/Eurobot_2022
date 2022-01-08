@@ -4,62 +4,94 @@
 #include "Adafruit_PWMServoDriver.h"
 #include "Music.h"
 
-bool start_flag = false;
-boolean jack;
-//int8_t jack_Pin = -1;
-const uint8_t buzzerPin = 8;
+// PIN
+#define JACK_PIN -1
+#define STATE_PIN 3
+#define BUZZER_PIN 8
+#define TX_PIN 9
+#define RX_PIN 10
 
-float x_Target;
-float y_Target;
-float z_Target;
-float module_Target;
-float argument_Target;
+// FLAG
+bool startFlag = true;
+bool jackFlag = true;
+bool blueListenFlag = true;
+bool blueSerialFlag = false;
+bool blueConnectFlag = false;
 
-const uint8_t txPin = 9;
-const uint8_t rxPin = 10;
-char bluetoothData;
+// CONSTANTE
+#define SERVO_FREQ 50
+#define BAUD 9600
+#define DELAY_1 500
 
-const uint16_t servoFreq = 50;
+char blueData;
+float lastMillis;
 
-Adafruit_PWMServoDriver* servoDriver = new Adafruit_PWMServoDriver();
+
+//Adafruit_PWMServoDriver* servoDriver = new Adafruit_PWMServoDriver();
 Music* music;
 Robot* robot;
-SoftwareSerial blueSerial(txPin, rxPin);
+SoftwareSerial blueSerial(TX_PIN, RX_PIN);
 
 void setup() 
 {
-  //pinMode(jack_Pin, INPUT);
-  Serial.begin(9600);
-  Serial.println("SETUP");
-  blueSerial.begin(9600);
-  
+  //pinMode(JACK_PIN, INPUT);
+  Serial.begin(BAUD);
+  pinMode(STATE_PIN, INPUT);
+    
   // PCA9685
-  servoDriver->begin();
-  servoDriver->setOscillatorFrequency(27000000);
-  servoDriver->setPWMFreq(servoFreq);
+  //servoDriver->begin();
+  //servoDriver->setOscillatorFrequency(27000000);
+  //servoDriver->setPWMFreq(SERVO_FREQ);
 
-  music = new Music(buzzerPin);
-  Wire.begin();
-  robot = new Robot(servoDriver);
+  blueSerial.begin(BAUD);
+  blueSerialFlag = true;
+
+  music = new Music(BUZZER_PIN);
+  //robot = new Robot(servoDriver);
+  delay(300);
+  music->windows();
+  lastMillis = millis();
 }
 
 void loop() 
-{/*
-  Serial.print("loop");
-  if (!start_flag) 
+{
+  if(millis() > lastMillis + DELAY_1)
+  {
+    testBlueConnection();
+    lastMillis += DELAY_1;
+  }
+  
+  
+  /*
+  if (!startFlag) 
   {
     //music->windows();
-    start_flag = true;
+    startFlag = true;
   }*/
-
+  //delay(2000);
+  //tone(8, 110, 100);
   //robot->CalibrateAllLegs();
 
-  if (blueSerial.available()) 
+  if(blueListenFlag)
   {
-    bluetoothData=blueSerial.read(); 
-    //music->useBuzzer();
-    //tone(buzzerPin, 110, 100);
-    parseCommand(bluetoothData);
+    if(blueSerialFlag)
+    {
+      if (blueSerial.available()) 
+      {
+        blueData=blueSerial.read(); 
+        parseCommand(blueData);
+      }
+    }
+    else
+    {
+      blueSerial.begin(9600);
+      blueSerialFlag = true;
+    }
+  }
+  else
+  {
+    blueSerial.end();
+    blueSerialFlag = false;
   }
 }
 
@@ -68,22 +100,36 @@ void parseCommand(char input)
   switch (input) {
     case 'u': // UP
       Serial.println("UP");
+      music->useBuzzer();
+      
+      blueSerial.end();
+      blueSerialFlag = false;
+      
+      //robot->CalibrateAllLegs();
+
+      blueSerial.begin(9600);
+      blueSerialFlag = true;
       break;
     case 'd': // DOWN
       Serial.println("DOWN");
+      music->useBuzzer();
       break;
     case 'l': // LEFT
       Serial.println("LEFT");
+      music->useBuzzer();
       break;
     case 'r': // RIGHT
       Serial.println("RIGHT");
+      music->useBuzzer();
       break; 
 
     case 'm': // SELECT
       Serial.println("SELECT");
+      music->useBuzzer();
       break;
     case 'M': // START
       Serial.println("START");
+      music->useBuzzer();
       break; 
       
     case 'S': // SQUARE
@@ -105,109 +151,26 @@ void parseCommand(char input)
   }
 }
 
-
-// Archive --------------------------------------------
-
-
-/*
-  if (nunchuk_read())
+void testBlueConnection()
+{
+  if(digitalRead(STATE_PIN))
   {
-    if(nunchuk_buttonC())
+    if(!blueConnectFlag)
     {
-      Serial.println("Button C");
-      //if(music->musicPlayed_flag == false) music->saxGuy();
-      robot->CalibrateAllLegs();
+      Serial.println("Bluetooth : Connected");
+      music->windowsConnection();
     }
-    else if(nunchuk_buttonZ())
-    {
-      Serial.println("Button Z");
-      //if(music->musicPlayed_flag == false) music->crazyFrog();
-      robot->raiseAllLegs();
-    }
-    else if(JoystickForward())
-    {
-      Serial.println("Button Forward");
-      //if(music->musicPlayed_flag == false) music->saxGuy();
-      //robot->walkForward();
-    }
-    else if(JoystickRearward())
-    {
-      for(int i=0; i<100; i++)
-      {
-        //robot->MoveOneLegToCoordinatePolar(100, PI/4, 100, 0);
-      }
-      //robot->walkRearward();
-    }
-    else if(JoystickLeftSide())
-    {
-      //robot->rotateLeftSide();
-    }
-    else if(JoystickRightSide())
-    {
-      //robot->rotateRightSide();
-    }
-  }*/
-
-
-
-
-/*
-  SREG |= 128;
-
-  //0.5Hz
-  TCCR1A=0;
-  TCCR1B=4;
-  TIMSK1=1;
-  TCNT1=2855;
-
-  //10Hz
-  TCCR2A=0;
-  TCCR2B=7;
-  TIMSK2=1;
-  TCNT2=243;
-*/
-
-/*
-//0.5Hz
-ISR(TIMER1_OVF_vect)
-{
-  TCNT1=2855;
-  Print_LCDScreen_OhmmeterValue();
-}
-
-//10Hz
-ISR(TIMER2_OVF_vect)
-{
-  TCNT2=243;
-}*/
-
-/*
-void Print_LCDScreen_OhmmeterValue()
-{
-  Clear_LCDScreen();
-  lcd.setCursor(0, 0);
-  lcd.print("Ohmmeter:"); 
-  lcd.setCursor(0, 1);
-  lcd.print(ohmmeter.GetUnknownResistorValue());
-  lcd.setCursor(8, 1);
-  lcd.print( ohmmeter.GetNormalizedValue(ohmmeter.GetUnknownResistorValue()) );
-}
-
-void Clear_LCDScreen()
-{
-  lcd.setCursor(0, 0);
-  lcd.print("                ");
-  lcd.setCursor(0, 1);
-  lcd.print("                ");
-}*/
-
-/*
-  jack = digitalRead(jack_Pin);
-  if(jack)
-  {
     
+    blueConnectFlag = true;
   }
-  else 
+  else
   {
+    if(blueConnectFlag)
+    {
+      Serial.println("Bluetooth : Disconnected");
+      music->windowsDisconnection();
+    }
     
-  }*/
+    blueConnectFlag = false;
+  }
+}
