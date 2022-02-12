@@ -1,0 +1,40 @@
+﻿<Window x:Class="PataponController.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PataponController"
+        mc:Ignorable="d"
+        Title="Patapon Controller" Height="450" Width="800" FontSize="36" FontFamily="Gill Sans MT">
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="/d1lajrm-6a9d2218-8c5c-4bbf-a7a1-f89e053b398f.jpg"/>
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition/>
+            <RowDefinition Height="50"/>
+            <RowDefinition/>
+            <RowDefinition Height="50"/>
+            <RowDefinition/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="50"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="50"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="50"/>
+        </Grid.ColumnDefinitions>
+        <Button Grid.Column="1" Content="Walk" Grid.Row="3" Click="walkButton_Click" Background="#FFFA9FFA"/>
+        <Button Grid.Column="3" Content="Attack" Grid.Row="3" Background="#FFFF0142"/>
+        <Button Grid.Column="5" Content="Defend" Grid.Row="3" Background="#FF01A409"/>
+        <Button Grid.Column="1" Content="Jump" Margin="0,50,0,0" Grid.Row="4" Background="#FF00C5CA" Grid.RowSpan="2"/>
+        <Button Grid.Column="3" Content="Run" Margin="0,50,0,0" Grid.Row="4" Background="White" Grid.RowSpan="2"/>
+        <Button Grid.Column="5" Content="Miracle" Margin="0,50,0,0" Grid.Row="4" Background="#FFF7C20F" Grid.RowSpan="2"/>
+        <Button Grid.Column="1" Content="Launch" Margin="0,0,0,50" Grid.Row="1" Click="launchButton_Click" Grid.RowSpan="2"/>
+
+    </Grid>
+</Window>

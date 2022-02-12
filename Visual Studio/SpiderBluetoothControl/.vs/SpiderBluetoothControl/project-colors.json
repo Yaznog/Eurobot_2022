@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "edb5851e-eab9-4c6c-b856-57319ae229b3": {
+      "ProjectGuid": "edb5851e-eab9-4c6c-b856-57319ae229b3",
+      "DisplayName": "SpiderBluetoothControl",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}
