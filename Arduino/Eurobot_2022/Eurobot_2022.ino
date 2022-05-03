@@ -105,7 +105,7 @@ void parseCommand(char input)
       blueSerial.end();
       blueSerialFlag = false;
       
-      //robot->CalibrateAllLegs();
+      robot->CalibrateAllLegs();
 
       blueSerial.begin(9600);
       blueSerialFlag = true;
